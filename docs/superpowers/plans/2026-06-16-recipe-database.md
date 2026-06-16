@@ -144,7 +144,7 @@ Expected: Angular CLI 18.x, Angular 18.x listed.
 module.exports = {
   preset: 'jest-preset-angular',
   setupFilesAfterFramework: ['<rootDir>/setup-jest.ts'],
-  testPathPattern: ['src/.*\\.spec\\.ts$'],
+  testMatch: ['**/src/**/*.spec.ts'],
   collectCoverageFrom: ['src/app/**/*.ts', '!src/app/**/*.module.ts'],
   coverageDirectory: 'coverage',
   transform: {
@@ -977,9 +977,22 @@ export class RecipeService {
         .eq('user_id', userId);
       return false;
     } else {
-      await this.supabase.client
+      const { error } = await this.supabase.client
         .from('favorite_recipes')
         .insert({ recipe_id: recipeId, user_id: userId });
+      if (error) {
+        // Unique constraint violation (23505) means concurrent tap already inserted — re-query truth
+        if (error.code === '23505') {
+          const { data: existing } = await this.supabase.client
+            .from('favorite_recipes')
+            .select('recipe_id')
+            .eq('recipe_id', recipeId)
+            .eq('user_id', userId)
+            .maybeSingle();
+          return !!existing;
+        }
+        throw new Error(error.message);
+      }
       return true;
     }
   }
@@ -1282,9 +1295,6 @@ import { Component, OnInit } from '@angular/core';
 import { RouterOutlet, RouterLink, RouterLinkActive } from '@angular/router';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import { AuthService } from './core/auth.service';
-import { AsyncPipe } from '@angular/common';
-import { toSignal } from '@angular/core/rxjs-interop';
-import { map } from 'rxjs';
 
 @Component({
   selector: 'app-root',
@@ -2634,7 +2644,7 @@ Expected: FAIL.
 
 ```ts
 // src/app/features/recipes/cooking-mode/step-timer/step-timer.component.ts
-import { Component, input, output, signal, OnDestroy } from '@angular/core';
+import { Component, input, output, signal, OnInit, OnDestroy } from '@angular/core';
 import { TranslateModule } from '@ngx-translate/core';
 
 @Component({
@@ -2643,7 +2653,7 @@ import { TranslateModule } from '@ngx-translate/core';
   imports: [TranslateModule],
   templateUrl: './step-timer.component.html',
 })
-export class StepTimerComponent implements OnDestroy {
+export class StepTimerComponent implements OnInit, OnDestroy {
   durationMinutes = input.required<number>();
   done = output<void>();
 
@@ -2873,10 +2883,8 @@ export class CookingModeComponent implements OnInit, OnDestroy {
               </button>
             }
           </div>
-        } @else {
-          <!-- No timer: auto-mark as done -->
-          <ng-container *ngIf="onTimerDone(i)" />
         }
+        <!-- Steps without a timer are pre-marked done in buildGroups() -->
       </div>
     }
   </div>
@@ -2892,12 +2900,11 @@ export class CookingModeComponent implements OnInit, OnDestroy {
 </div>
 ```
 
-- [ ] **Step 2: Fix the no-timer auto-mark hack**
+- [ ] **Step 2: Confirm buildGroups() pre-marks steps without timers**
 
-The template `ng-container *ngIf="onTimerDone(i)"` is incorrect. Update `buildGroups()` to pre-mark steps without timers as finished:
+The template already omits the no-timer block. Verify `buildGroups()` in `cooking-mode.component.ts` uses:
 
 ```ts
-// In cooking-mode.component.ts, update buildGroups():
 this.stepGroups.set(
   Array.from(map.entries()).map(([, steps], i) => ({
     groupIndex: i,
@@ -2907,20 +2914,7 @@ this.stepGroups.set(
 );
 ```
 
-Remove the `ng-container` hack from the template. Replace last `@if` block with just:
-```html
-@if (step.time) {
-  <div class="mt-4 flex flex-col items-center gap-2">
-    <app-step-timer [durationMinutes]="step.time" (done)="onTimerDone(i)" />
-    @if (currentGroup.timersFinished[i]) {
-      <button (click)="dismissTimer(i)"
-        class="text-xs text-gray-500 border border-gray-300 rounded-full px-3 py-1">
-        {{ 'cooking.dismiss' | translate }}
-      </button>
-    }
-  </div>
-}
-```
+This is the version shown in Step 1. `canAdvance` works correctly because steps without timers are `true` from the start.
 
 - [ ] **Step 3: Add CookingMode import to RecipeDetail**
 
