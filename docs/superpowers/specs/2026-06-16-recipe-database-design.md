@@ -64,12 +64,32 @@ Supabase
 ## 4. Data Model
 
 ```sql
+-- Mirror auth.users into public schema so foreign keys work
+-- Auto-populated via trigger on auth.users insert
+CREATE TABLE public.users (
+  id         uuid PRIMARY KEY REFERENCES auth.users(id) ON DELETE CASCADE,
+  email      text
+);
+
+CREATE FUNCTION public.handle_new_user() RETURNS trigger AS $$
+BEGIN
+  INSERT INTO public.users (id, email)
+  VALUES (NEW.id, NEW.email)
+  ON CONFLICT (id) DO NOTHING;
+  RETURN NEW;
+END;
+$$ LANGUAGE plpgsql SECURITY DEFINER;
+
+CREATE TRIGGER on_auth_user_created
+  AFTER INSERT ON auth.users
+  FOR EACH ROW EXECUTE FUNCTION public.handle_new_user();
+
 -- Difficulty enforced as enum, not free text
 CREATE TYPE difficulty_level AS ENUM ('easy', 'medium', 'hard');
 
 CREATE TABLE recipes (
   id             uuid PRIMARY KEY DEFAULT gen_random_uuid(),
-  user_id        uuid NOT NULL REFERENCES users(id),  -- RLS enforced
+  user_id        uuid NOT NULL REFERENCES public.users(id),  -- RLS enforced
   name           text NOT NULL,
   description    text,                                 -- nullable; filled from import or omitted
   cuisine_type   text,
@@ -214,8 +234,10 @@ tags: [quick, vegetarian]
 **Parsing rules:**
 - Front-matter (YAML between `---`) maps directly to recipe fields. Parsed with `js-yaml`.
 - Text between end of front-matter and first `##` heading → `description` (trimmed).
-- `## Ingredientes`: one `- <qty> <unit> <name>` per line. Regex: `^-\s+(?:(\d+(?:\.\d+)?)\s+([\w/]+)\s+)?(.+?)(?:,\s*(.+))?$` → qty, unit, name, prep. qty and unit must appear together or not at all; name is required. Example: `- garlic` → `{name:"garlic"}`, `- 2 cloves garlic, minced` → `{qty:2, unit:"cloves", name:"garlic", prep:"minced"}`.
-- `## Pasos`: numbered list `1. <text> (N min) [group:G]`. Regex extracts time from `(N min)` and group from `[group:G]`. Both optional.
+- Ingredients heading: `## Ingredientes` (es) or `## Ingredients` (en) — parser accepts both regardless of `language` field.
+- `## Ingredientes` / `## Ingredients`: one `- <qty> <unit> <name>` per line. Regex: `^-\s+(?:(\d+(?:\.\d+)?)\s+([\w/]+)\s+)?(.+?)(?:,\s*(.+))?$` → qty, unit, name, prep. qty and unit must appear together or not at all; name is required. Example: `- garlic` → `{name:"garlic"}`, `- 2 cloves garlic, minced` → `{qty:2, unit:"cloves", name:"garlic", prep:"minced"}`.
+- Steps heading: `## Pasos` (es) or `## Steps` (en) — parser accepts both.
+- `## Pasos` / `## Steps`: numbered list `1. <text> (N min) [group:G]`. Regex extracts time from `(N min)` and group from `[group:G]`. Both optional.
 - **Validation:** reject files missing `name` or `steps`. Return structured error to `import_jobs.error_msg`.
 
 ---
@@ -256,7 +278,7 @@ All Supabase interaction is isolated to these services. Components never import 
 
 ## 8. Screens & Navigation
 
-**Bottom navigation (3 tabs):** Recetas · Importar · Ajustes
+**Bottom navigation (3 tabs):** labels are i18n'd via `| translate` pipe — never hardcoded. Default keys: `nav.recipes` (Recetas), `nav.import` (Importar), `nav.settings` (Ajustes). Recipe content labels (e.g., "¿Qué tienes en casa?") are also translated; only recipe *data* (names, steps) stays in its authored language.
 
 ### Recetas
 - Sticky search bar. Tap → expands to ingredient multi-select mode ("¿Qué tienes en casa?")
