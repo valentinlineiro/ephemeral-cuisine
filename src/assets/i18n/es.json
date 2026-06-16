@@ -1,0 +1,53 @@
+{
+  "nav": {
+    "recipes": "Recetas",
+    "import": "Importar",
+    "settings": "Ajustes"
+  },
+  "recipes": {
+    "search_placeholder": "Buscar recetas...",
+    "ingredient_prompt": "¿Qué tienes en casa?",
+    "filters": "Filtros",
+    "favorites": "Favoritos",
+    "empty_title": "Aún no tienes recetas",
+    "empty_action": "Importa tu primera receta",
+    "start_cooking": "Comenzar a cocinar",
+    "minutes": "min",
+    "servings": "{{count}} personas"
+  },
+  "cooking": {
+    "step_of": "Paso {{current}} de {{total}}",
+    "next": "Siguiente",
+    "exit": "Salir",
+    "timer_done": "¡Listo!",
+    "dismiss": "Descartar"
+  },
+  "import": {
+    "title": "Importar recetas",
+    "drop_hint": "Arrastra un archivo JSON o MD aquí",
+    "browse": "Seleccionar archivo",
+    "history_title": "Importaciones recientes",
+    "status_pending": "Pendiente",
+    "status_processing": "Procesando",
+    "status_done": "Completado",
+    "status_error": "Error"
+  },
+  "settings": {
+    "title": "Ajustes",
+    "language": "Idioma",
+    "account": "Cuenta",
+    "sign_out": "Cerrar sesión"
+  },
+  "auth": {
+    "title": "Ephemeral Cuisine",
+    "subtitle": "Tu base de datos de recetas",
+    "email_label": "Correo electrónico",
+    "send_link": "Enviar enlace mágico",
+    "check_email": "Revisa tu correo para el enlace de acceso"
+  },
+  "difficulty": {
+    "easy": "Fácil",
+    "medium": "Medio",
+    "hard": "Difícil"
+  }
+}
