@@ -49,11 +49,13 @@ export class RecipeService {
     const { data, error } = await query.order('created_at', { ascending: false });
     if (error) throw new Error(error.message);
 
-    return (data ?? []).map((r: any) => ({
-      ...r,
-      is_favorite: Array.isArray(r.favorite_recipes) && r.favorite_recipes.length > 0,
-      favorite_recipes: undefined,
-    }));
+    return (data ?? []).map((r: any) => {
+      const { favorite_recipes, ...rest } = r;
+      return {
+        ...rest,
+        is_favorite: Array.isArray(favorite_recipes) && favorite_recipes.length > 0,
+      };
+    });
   }
 
   async getById(id: string): Promise<Recipe | null> {
@@ -64,10 +66,10 @@ export class RecipeService {
       .single();
     if (error) throw new Error(error.message);
     if (!data) return null;
+    const { favorite_recipes, ...rest } = data;
     return {
-      ...data,
-      is_favorite: Array.isArray(data.favorite_recipes) && data.favorite_recipes.length > 0,
-      favorite_recipes: undefined,
+      ...rest,
+      is_favorite: Array.isArray(favorite_recipes) && favorite_recipes.length > 0,
     };
   }
 
