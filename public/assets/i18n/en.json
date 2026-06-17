@@ -120,5 +120,8 @@
     "easy": "Easy",
     "medium": "Medium",
     "hard": "Hard"
+  },
+  "recipe": {
+    "i_cooked_this": "I finished cooking"
   }
 }

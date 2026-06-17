@@ -106,6 +106,19 @@
     </div>
   </div>
 
+  <div class="px-4">
+    <button (click)="finishedCooking.set(true)"
+      class="w-full bg-primary text-white rounded-xl py-4 font-bold text-lg mt-6">
+      {{ 'recipe.i_cooked_this' | translate }}
+    </button>
+  </div>
+
+  @if (finishedCooking() && recipe()) {
+    <app-post-cook-flow
+      [recipe]="recipe()!"
+      (done)="finishedCooking.set(false)" />
+  }
+
   @if (cookingMode()) {
     <app-cooking-mode [recipe]="recipe()!" (exit)="cookingMode.set(false)" />
   }

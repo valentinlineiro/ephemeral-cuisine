@@ -4,17 +4,19 @@ import { TranslatePipe } from '@ngx-translate/core';
 import { RecipeService } from '../recipe.service';
 import { Recipe } from '../models/recipe.model';
 import { CookingModeComponent } from '../cooking-mode/cooking-mode.component';
+import { PostCookFlowComponent } from '../../cook-log/post-cook-flow/post-cook-flow.component';
 
 @Component({
   selector: 'app-recipe-detail',
   standalone: true,
-  imports: [TranslatePipe, CookingModeComponent],
+  imports: [TranslatePipe, CookingModeComponent, PostCookFlowComponent],
   templateUrl: './recipe-detail.component.html',
 })
 export class RecipeDetailComponent implements OnInit {
   recipe = signal<Recipe | null>(null);
   loading = signal(true);
   cookingMode = signal(false);
+  finishedCooking = signal(false);
 
   constructor(
     private route: ActivatedRoute,
