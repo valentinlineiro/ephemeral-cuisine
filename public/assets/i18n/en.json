@@ -173,6 +173,18 @@
     "saving": "Saving…",
     "save": "Save cook",
     "finish": "Done",
-    "leftover_blueprint": "Tomorrow with the leftovers:"
+    "leftover_blueprint": "Tomorrow with the leftovers:",
+    "servings": "Servings"
+  },
+  "health": {
+    "calories": "Cal/serving",
+    "sodium": "Sodium/serving",
+    "protein": "Protein/serving",
+    "this_week": "This week",
+    "avg_sodium": "avg sodium/day",
+    "avg_calories": "avg cal/day",
+    "protein_days": "protein days",
+    "swap_title": "What if you swapped",
+    "per_serving": "per serving"
   }
 }

@@ -173,6 +173,18 @@
     "saving": "Guardando…",
     "save": "Guardar cocinada",
     "finish": "Listo",
-    "leftover_blueprint": "Mañana con las sobras:"
+    "leftover_blueprint": "Mañana con las sobras:",
+    "servings": "Raciones"
+  },
+  "health": {
+    "calories": "Cal/ración",
+    "sodium": "Sodio/ración",
+    "protein": "Proteína/ración",
+    "this_week": "Esta semana",
+    "avg_sodium": "sodio medio/día",
+    "avg_calories": "cal medias/día",
+    "protein_days": "días proteína",
+    "swap_title": "¿Qué pasa si cambias",
+    "per_serving": "por ración"
   }
 }

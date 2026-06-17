@@ -85,5 +85,30 @@
         </button>
       </div>
     }
+
+    <!-- Weekly health summary -->
+    @if (weeklySummary() && weeklySummary()!.cook_count > 0) {
+      <div class="bg-white border border-gray-200 rounded-xl p-4 mt-2">
+        <h3 class="text-xs font-semibold text-gray-400 uppercase tracking-wide mb-3">{{ 'health.this_week' | translate }}</h3>
+        <div class="flex gap-3 text-center">
+          <div class="flex-1">
+            <p [class]="sodiumColor(weeklySummary()!.avg_sodium_mg, profile()?.max_sodium_mg ?? 1500) + ' text-lg font-bold'">
+              {{ weeklySummary()!.avg_sodium_mg }}mg
+            </p>
+            <p class="text-xs text-gray-400">{{ 'health.avg_sodium' | translate }}</p>
+          </div>
+          <div class="flex-1">
+            <p [class]="calorieColor(weeklySummary()!.avg_calories, profile()?.calorie_target ?? 2200) + ' text-lg font-bold'">
+              {{ weeklySummary()!.avg_calories }}
+            </p>
+            <p class="text-xs text-gray-400">{{ 'health.avg_calories' | translate }}</p>
+          </div>
+          <div class="flex-1">
+            <p class="text-lg font-bold text-gray-800">{{ weeklySummary()!.protein_target_hit_days }}/7</p>
+            <p class="text-xs text-gray-400">{{ 'health.protein_days' | translate }}</p>
+          </div>
+        </div>
+      </div>
+    }
   }
 </div>
