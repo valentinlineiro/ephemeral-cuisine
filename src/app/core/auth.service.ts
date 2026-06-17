@@ -23,12 +23,8 @@ export class AuthService implements OnDestroy {
     this.subscription = data.subscription;
   }
 
-  async signIn(email: string): Promise<void> {
-    const redirectTo = `${window.location.origin}${window.location.pathname.split('/').slice(0, 2).join('/')}/auth/callback`;
-    const { error } = await this.supabase.client.auth.signInWithOtp({
-      email,
-      options: { emailRedirectTo: redirectTo },
-    });
+  async signIn(email: string, password: string): Promise<void> {
+    const { error } = await this.supabase.client.auth.signInWithPassword({ email, password });
     if (error) throw error;
   }
 

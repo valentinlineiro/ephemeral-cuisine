@@ -12,19 +12,19 @@ import { AuthService } from '../../core/auth.service';
 })
 export class LoginPageComponent {
   email = '';
-  sent = signal(false);
+  password = '';
   error = signal<string | null>(null);
   loading = signal(false);
 
   constructor(private auth: AuthService, private router: Router) {}
 
   async submit(): Promise<void> {
-    if (!this.email) return;
+    if (!this.email || !this.password) return;
     this.loading.set(true);
     this.error.set(null);
     try {
-      await this.auth.signIn(this.email);
-      this.sent.set(true);
+      await this.auth.signIn(this.email, this.password);
+      this.router.navigate(['/recipes']);
     } catch (e: any) {
       this.error.set(e.message);
     } finally {

@@ -42,8 +42,8 @@
     "title": "Ephemeral Cuisine",
     "subtitle": "Your personal recipe database",
     "email_label": "Email address",
-    "send_link": "Send magic link",
-    "check_email": "Check your email for the login link"
+    "password_label": "Password",
+    "sign_in": "Sign in"
   },
   "difficulty": {
     "easy": "Easy",
