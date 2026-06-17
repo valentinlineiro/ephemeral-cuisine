@@ -55,7 +55,15 @@
   },
   "ranking": {
     "title": "My Best Dishes",
-    "coming_soon": "Coming soon: your culinary Hall of Fame"
+    "coming_soon": "Coming soon: your culinary Hall of Fame",
+    "loading": "Loading…",
+    "empty": "Cook your first dish and come back here",
+    "overall": "Best Overall",
+    "by_technique": "Best by Technique",
+    "most_improved": "Most Improved",
+    "worth_repeating": "Worth Repeating",
+    "worth_repeating_hint": "High rating but only cooked once",
+    "cooks": "cooks"
   },
   "inventory": {
     "title": "Inventory",

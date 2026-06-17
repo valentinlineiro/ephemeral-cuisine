@@ -1,0 +1,105 @@
+<div class="p-4 pb-24">
+  <h1 class="text-2xl font-bold text-gray-900 mb-6">🏆 {{ 'ranking.title' | translate }}</h1>
+
+  @if (loading()) {
+    <p class="text-gray-400 text-center py-12">{{ 'ranking.loading' | translate }}</p>
+  } @else if (!data() || data()!.overall.length === 0) {
+    <div class="text-center py-16">
+      <p class="text-gray-400">{{ 'ranking.empty' | translate }}</p>
+    </div>
+  } @else {
+    <!-- OVERALL -->
+    <section class="mb-8">
+      <h2 class="text-sm font-semibold text-gray-500 uppercase tracking-wide mb-3">{{ 'ranking.overall' | translate }}</h2>
+      <div class="flex flex-col gap-2">
+        @for (dish of data()!.overall; track dish.recipe_id; let i = $index) {
+          <a [routerLink]="['/recipes', dish.recipe_id]"
+            class="bg-white border border-gray-200 rounded-xl p-4 flex items-center gap-3">
+            <span class="text-lg font-bold text-gray-300 w-6">{{ i + 1 }}</span>
+            <div class="flex-1 min-w-0">
+              <p class="font-semibold text-gray-900 truncate">{{ dish.recipe.name }}</p>
+              <p class="text-xs text-gray-400">{{ dish.cook_count }} {{ 'ranking.cooks' | translate }}</p>
+            </div>
+            <span class="font-bold text-primary">{{ formatRating(dish.avg_self_rating) }}</span>
+          </a>
+        }
+      </div>
+    </section>
+
+    <!-- BY AUDIENCE -->
+    @for (audience of data()!.byAudience; track audience.person) {
+      <section class="mb-8">
+        <h2 class="text-sm font-semibold text-gray-500 uppercase tracking-wide mb-3">
+          ❤️ {{ audience.person }}
+        </h2>
+        <div class="flex flex-col gap-2">
+          @for (dish of audience.dishes; track dish.recipe_id) {
+            <a [routerLink]="['/recipes', dish.recipe_id]"
+              class="bg-white border border-gray-200 rounded-xl p-3 flex items-center gap-3">
+              <div class="flex-1 min-w-0">
+                <p class="font-medium text-gray-900 truncate">{{ dish.recipe.name }}</p>
+              </div>
+              <span class="font-bold text-primary text-sm">{{ formatRating(dish.audience_rating ?? 0) }}</span>
+            </a>
+          }
+        </div>
+      </section>
+    }
+
+    <!-- BY TECHNIQUE -->
+    @if (data()!.byTechnique.length > 0) {
+      <section class="mb-8">
+        <h2 class="text-sm font-semibold text-gray-500 uppercase tracking-wide mb-3">{{ 'ranking.by_technique' | translate }}</h2>
+        <div class="flex flex-col gap-2">
+          @for (dish of data()!.byTechnique; track dish.recipe_id) {
+            <a [routerLink]="['/recipes', dish.recipe_id]"
+              class="bg-white border border-gray-200 rounded-xl p-3 flex items-center gap-3">
+              <div class="flex-1 min-w-0">
+                <p class="font-medium text-gray-900 truncate">{{ dish.recipe.name }}</p>
+                <p class="text-xs text-gray-400">{{ dish.technique.name }}</p>
+              </div>
+              <span class="font-bold text-primary text-sm">{{ formatRating(dish.avg_self_rating) }}</span>
+            </a>
+          }
+        </div>
+      </section>
+    }
+
+    <!-- MOST IMPROVED -->
+    @if (data()!.mostImproved.length > 0) {
+      <section class="mb-8">
+        <h2 class="text-sm font-semibold text-gray-500 uppercase tracking-wide mb-3">📈 {{ 'ranking.most_improved' | translate }}</h2>
+        <div class="flex flex-col gap-2">
+          @for (dish of data()!.mostImproved; track dish.recipe_id) {
+            <a [routerLink]="['/recipes', dish.recipe_id]"
+              class="bg-white border border-gray-200 rounded-xl p-3 flex items-center gap-3">
+              <div class="flex-1 min-w-0">
+                <p class="font-medium text-gray-900 truncate">{{ dish.recipe.name }}</p>
+              </div>
+              <span class="text-green-600 font-bold text-sm">+{{ dish.improvement?.toFixed(1) }}</span>
+            </a>
+          }
+        </div>
+      </section>
+    }
+
+    <!-- WORTH REPEATING -->
+    @if (data()!.worthRepeating.length > 0) {
+      <section class="mb-8">
+        <h2 class="text-sm font-semibold text-gray-500 uppercase tracking-wide mb-3">⭐ {{ 'ranking.worth_repeating' | translate }}</h2>
+        <p class="text-xs text-gray-400 mb-2">{{ 'ranking.worth_repeating_hint' | translate }}</p>
+        <div class="flex flex-col gap-2">
+          @for (dish of data()!.worthRepeating; track dish.recipe_id) {
+            <a [routerLink]="['/recipes', dish.recipe_id]"
+              class="bg-white border border-gray-200 rounded-xl p-3 flex items-center gap-3">
+              <div class="flex-1 min-w-0">
+                <p class="font-medium text-gray-900 truncate">{{ dish.recipe.name }}</p>
+              </div>
+              <span class="font-bold text-primary text-sm">{{ formatRating(dish.avg_self_rating) }}</span>
+            </a>
+          }
+        </div>
+      </section>
+    }
+  }
+</div>

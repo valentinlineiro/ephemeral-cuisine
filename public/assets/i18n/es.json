@@ -55,7 +55,15 @@
   },
   "ranking": {
     "title": "Mis Mejores Platos",
-    "coming_soon": "Próximamente: tu Hall of Fame culinario"
+    "coming_soon": "Próximamente: tu Hall of Fame culinario",
+    "loading": "Cargando…",
+    "empty": "Cocina tu primer plato y vuelve aquí",
+    "overall": "Lo Mejor",
+    "by_technique": "Mejor por Técnica",
+    "most_improved": "Más Mejorado",
+    "worth_repeating": "Vale la Pena Repetir",
+    "worth_repeating_hint": "Calificación alta pero solo cocinado una vez",
+    "cooks": "cocciones"
   },
   "inventory": {
     "title": "Inventario",
