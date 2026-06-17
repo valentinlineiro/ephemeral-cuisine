@@ -1,0 +1,57 @@
+<div class="fixed inset-0 bg-white z-50 flex flex-col">
+  <!-- Header -->
+  <div class="flex items-center justify-between px-4 pt-4 pb-3 border-b border-gray-100">
+    <button (click)="exit.emit()" class="text-gray-500 text-sm">
+      ← {{ 'cooking.exit' | translate }}
+    </button>
+    <span class="text-sm font-medium text-gray-600">
+      {{ 'cooking.step_of' | translate:{ current: currentGroupIndex() + 1, total: totalGroups } }}
+    </span>
+  </div>
+
+  <!-- Progress bar -->
+  <div class="h-1 bg-gray-100">
+    <div class="h-full bg-primary transition-all"
+      [style.width.%]="((currentGroupIndex() + 1) / totalGroups) * 100"></div>
+  </div>
+
+  <!-- Steps -->
+  <div class="flex-1 overflow-auto px-4 py-6 flex flex-col gap-4">
+    @for (step of currentGroup.steps; track step.order; let i = $index) {
+      <div class="bg-gray-50 rounded-2xl p-4">
+        <div class="flex items-start justify-between gap-3">
+          <div class="flex-1">
+            <span class="text-xs text-gray-400 font-medium mb-1 block">Paso {{ step.order }}</span>
+            <p class="text-base leading-relaxed">{{ step.text }}</p>
+          </div>
+          @if (step.time && currentGroup.timersFinished[i]) {
+            <span class="text-green-500 text-xl flex-shrink-0">✓</span>
+          }
+        </div>
+
+        @if (step.time) {
+          <div class="mt-4 flex flex-col items-center gap-2">
+            <app-step-timer
+              [durationMinutes]="step.time"
+              (done)="onTimerDone(i)" />
+            @if (currentGroup.timersFinished[i]) {
+              <button (click)="dismissTimer(i)"
+                class="text-xs text-gray-500 border border-gray-300 rounded-full px-3 py-1">
+                {{ 'cooking.dismiss' | translate }}
+              </button>
+            }
+          </div>
+        }
+      </div>
+    }
+  </div>
+
+  <!-- Advance button -->
+  <div class="px-4 pb-6 pt-3 border-t border-gray-100">
+    <button (click)="advance()"
+      [disabled]="!canAdvance"
+      class="w-full bg-primary text-white rounded-xl py-4 font-semibold text-base disabled:opacity-40 transition-opacity">
+      {{ currentGroupIndex() === totalGroups - 1 ? '¡Listo!' : ('cooking.next' | translate) }}
+    </button>
+  </div>
+</div>

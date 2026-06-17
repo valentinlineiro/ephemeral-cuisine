@@ -3,11 +3,12 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { TranslatePipe } from '@ngx-translate/core';
 import { RecipeService } from '../recipe.service';
 import { Recipe } from '../models/recipe.model';
+import { CookingModeComponent } from '../cooking-mode/cooking-mode.component';
 
 @Component({
   selector: 'app-recipe-detail',
   standalone: true,
-  imports: [TranslatePipe],
+  imports: [TranslatePipe, CookingModeComponent],
   templateUrl: './recipe-detail.component.html',
 })
 export class RecipeDetailComponent implements OnInit {

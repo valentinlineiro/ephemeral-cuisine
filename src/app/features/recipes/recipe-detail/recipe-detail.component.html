@@ -106,10 +106,7 @@
     </div>
   </div>
 
-  <!-- Cooking mode overlay — will be wired up in Task 22 -->
   @if (cookingMode()) {
-    <div class="fixed inset-0 bg-white z-50 flex items-center justify-center">
-      <button (click)="cookingMode.set(false)" class="text-primary">Salir del modo cocina</button>
-    </div>
+    <app-cooking-mode [recipe]="recipe()!" (exit)="cookingMode.set(false)" />
   }
 }
