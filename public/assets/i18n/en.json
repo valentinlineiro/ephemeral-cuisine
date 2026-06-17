@@ -36,7 +36,22 @@
   },
   "tonight": {
     "title": "Tonight",
-    "coming_soon": "Coming soon: suggestion based on your inventory"
+    "loading": "Calculating suggestion…",
+    "new_combo": "New combo",
+    "familiar": "Already tried",
+    "uses_expiring": "Uses expiring ingredients",
+    "you_have": "You have",
+    "substitutions_needed": "Substitutions needed",
+    "missing_equipment": "Missing equipment",
+    "cook": "Cook it!",
+    "not_tonight": "Not tonight",
+    "previous": "Previous",
+    "no_suggestion": "No suggestions right now",
+    "no_suggestion_hint": "Add ingredients to your inventory to get suggestions",
+    "go_to_inventory": "Go to inventory",
+    "expired": "expired",
+    "expires_today": "expires today",
+    "expires_tomorrow": "expires tomorrow"
   },
   "ranking": {
     "title": "My Best Dishes",

@@ -1,0 +1,89 @@
+<div class="p-4 pb-24">
+  <h1 class="text-2xl font-bold text-gray-900 mb-4">{{ 'tonight.title' | translate }}</h1>
+
+  <!-- Expiry alerts -->
+  @if (expiringToday().length > 0) {
+    <div class="bg-red-50 border border-red-200 rounded-xl p-3 mb-4">
+      @for (item of expiringToday(); track item.id) {
+        <p class="text-sm text-red-700">
+          🔴 <strong>{{ item.name }}</strong> —
+          @if (getExpiryStatus(item.expiry_date) === 'expired') { {{ 'tonight.expired' | translate }} }
+          @else if (getExpiryStatus(item.expiry_date) === 'today') { {{ 'tonight.expires_today' | translate }} }
+          @else { {{ 'tonight.expires_tomorrow' | translate }} }
+        </p>
+      }
+    </div>
+  }
+
+  @if (loading()) {
+    <div class="flex items-center justify-center py-24">
+      <p class="text-gray-400">{{ 'tonight.loading' | translate }}</p>
+    </div>
+  } @else if (!current()) {
+    <div class="text-center py-16">
+      <p class="text-gray-500 text-lg mb-2">{{ 'tonight.no_suggestion' | translate }}</p>
+      <p class="text-gray-400 text-sm mb-6">{{ 'tonight.no_suggestion_hint' | translate }}</p>
+      <a routerLink="/inventory" class="bg-primary text-white px-6 py-3 rounded-lg font-medium">
+        {{ 'tonight.go_to_inventory' | translate }}
+      </a>
+    </div>
+  } @else {
+    <!-- Main suggestion card -->
+    <div class="bg-white border border-gray-200 rounded-2xl p-5 shadow-sm mb-4">
+      <div class="flex items-start justify-between mb-3">
+        <div class="flex-1">
+          <p class="text-xs text-gray-400 uppercase tracking-wide mb-1">
+            @if (current()!.isNovel) { ✨ {{ 'tonight.new_combo' | translate }} }
+            @else { {{ 'tonight.familiar' | translate }} }
+          </p>
+          <h2 class="text-xl font-bold text-gray-900">{{ current()!.recipe.name }}</h2>
+        </div>
+        @if (current()!.expiryScore > 5) {
+          <span class="bg-red-100 text-red-700 text-xs px-2 py-1 rounded-full font-medium ml-2">
+            {{ 'tonight.uses_expiring' | translate }}
+          </span>
+        }
+      </div>
+
+      @if (current()!.matchedInventoryItems.length > 0) {
+        <p class="text-sm text-gray-600 mb-3">
+          {{ 'tonight.you_have' | translate }}: {{ matchedNames(current()!.matchedInventoryItems) }}
+        </p>
+      }
+
+      @if (current()!.substitutions.length > 0) {
+        <div class="bg-amber-50 border border-amber-200 rounded-lg p-3 mb-3 text-sm text-amber-800">
+          🔄 {{ 'tonight.substitutions_needed' | translate }}: {{ current()!.substitutions.join(', ') }}
+        </div>
+      }
+
+      @if (current()!.missingEquipment.length > 0) {
+        <div class="bg-gray-50 border border-gray-200 rounded-lg p-3 mb-3 text-sm text-gray-600">
+          ⚠️ {{ 'tonight.missing_equipment' | translate }}: {{ current()!.missingEquipment.join(', ') }}
+        </div>
+      }
+
+      <div class="flex gap-3 mt-4">
+        <a [routerLink]="['/recipes', current()!.recipe.id]"
+          class="flex-1 bg-primary text-white rounded-xl py-3 font-bold text-center">
+          {{ 'tonight.cook' | translate }}
+        </a>
+      </div>
+    </div>
+
+    <!-- Navigation between suggestions -->
+    @if (hasAlternatives()) {
+      <div class="flex items-center justify-between mt-2">
+        <button (click)="prev()" [disabled]="currentIndex() === 0"
+          class="text-gray-400 disabled:opacity-30 font-medium text-sm">
+          ← {{ 'tonight.previous' | translate }}
+        </button>
+        <span class="text-xs text-gray-400">{{ currentIndex() + 1 }} / {{ suggestions().length }}</span>
+        <button (click)="next()" [disabled]="currentIndex() === suggestions().length - 1"
+          class="text-primary disabled:opacity-30 font-medium text-sm">
+          {{ 'tonight.not_tonight' | translate }} →
+        </button>
+      </div>
+    }
+  }
+</div>

@@ -36,7 +36,22 @@
   },
   "tonight": {
     "title": "Esta noche",
-    "coming_soon": "Próximamente: sugerencia basada en tu inventario"
+    "loading": "Calculando sugerencia…",
+    "new_combo": "Combinación nueva",
+    "familiar": "Ya probado",
+    "uses_expiring": "Usa ingredientes que caducan",
+    "you_have": "Tienes",
+    "substitutions_needed": "Sustituciones para la pareja",
+    "missing_equipment": "Te falta equipamiento",
+    "cook": "¡Cocinar!",
+    "not_tonight": "Esta noche no",
+    "previous": "Anterior",
+    "no_suggestion": "Sin sugerencias por ahora",
+    "no_suggestion_hint": "Añade ingredientes a tu inventario para obtener sugerencias",
+    "go_to_inventory": "Ir al inventario",
+    "expired": "caducado",
+    "expires_today": "caduca hoy",
+    "expires_tomorrow": "caduca mañana"
   },
   "ranking": {
     "title": "Mis Mejores Platos",
