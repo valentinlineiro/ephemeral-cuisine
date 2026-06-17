@@ -1,7 +1,9 @@
 {
   "nav": {
-    "recipes": "Recipes",
-    "import": "Import",
+    "tonight": "Tonight",
+    "ranking": "Ranking",
+    "inventory": "Inventory",
+    "techniques": "Techniques",
     "settings": "Settings"
   },
   "recipes": {
@@ -32,11 +34,55 @@
     "status_done": "Done",
     "status_error": "Error"
   },
+  "tonight": {
+    "title": "Tonight",
+    "coming_soon": "Coming soon: suggestion based on your inventory"
+  },
+  "ranking": {
+    "title": "My Best Dishes",
+    "coming_soon": "Coming soon: your culinary Hall of Fame"
+  },
+  "inventory": {
+    "title": "Inventory",
+    "coming_soon": "Coming soon: manage your pantry"
+  },
+  "techniques": {
+    "title": "Techniques",
+    "coming_soon": "Coming soon: your technique library"
+  },
   "settings": {
     "title": "Settings",
+    "dietary_title": "Dietary profile",
+    "max_sodium": "Max sodium",
+    "calorie_target": "Calorie target",
+    "protein_target": "Protein target",
+    "equipment_title": "Equipment",
+    "family_title": "Family",
+    "remove": "Remove",
+    "gluten_free": "Gluten-free",
+    "lactose_free": "Lactose-free",
+    "member_name_placeholder": "Name (e.g. Partner)",
+    "add_member": "Add",
+    "save": "Save profile",
+    "saving": "Saving…",
     "language": "Language",
     "account": "Account",
     "sign_out": "Sign out"
+  },
+  "equipment": {
+    "oven": "Oven",
+    "microwave": "Microwave",
+    "air_fryer": "Air fryer",
+    "hand_mixer": "Hand mixer",
+    "stand_mixer": "Stand mixer",
+    "bamboo_mat": "Bamboo mat",
+    "sharp_knife": "Sharp knife",
+    "food_processor": "Food processor",
+    "blender": "Blender",
+    "pressure_cooker": "Pressure cooker",
+    "slow_cooker": "Slow cooker",
+    "wok": "Wok",
+    "cast_iron": "Cast iron"
   },
   "auth": {
     "title": "Ephemeral Cuisine",

@@ -1,7 +1,9 @@
 {
   "nav": {
-    "recipes": "Recetas",
-    "import": "Importar",
+    "tonight": "Esta noche",
+    "ranking": "Ranking",
+    "inventory": "Inventario",
+    "techniques": "Técnicas",
     "settings": "Ajustes"
   },
   "recipes": {
@@ -32,11 +34,55 @@
     "status_done": "Completado",
     "status_error": "Error"
   },
+  "tonight": {
+    "title": "Esta noche",
+    "coming_soon": "Próximamente: sugerencia basada en tu inventario"
+  },
+  "ranking": {
+    "title": "Mis Mejores Platos",
+    "coming_soon": "Próximamente: tu Hall of Fame culinario"
+  },
+  "inventory": {
+    "title": "Inventario",
+    "coming_soon": "Próximamente: gestión de tu despensa"
+  },
+  "techniques": {
+    "title": "Técnicas",
+    "coming_soon": "Próximamente: tu biblioteca de técnicas"
+  },
   "settings": {
     "title": "Ajustes",
+    "dietary_title": "Perfil dietético",
+    "max_sodium": "Sodio máximo",
+    "calorie_target": "Objetivo calórico",
+    "protein_target": "Objetivo de proteína",
+    "equipment_title": "Equipamiento",
+    "family_title": "Familia",
+    "remove": "Eliminar",
+    "gluten_free": "Sin gluten",
+    "lactose_free": "Sin lactosa",
+    "member_name_placeholder": "Nombre (ej. Pareja)",
+    "add_member": "Añadir",
+    "save": "Guardar perfil",
+    "saving": "Guardando…",
     "language": "Idioma",
     "account": "Cuenta",
     "sign_out": "Cerrar sesión"
+  },
+  "equipment": {
+    "oven": "Horno",
+    "microwave": "Microondas",
+    "air_fryer": "Air fryer",
+    "hand_mixer": "Batidora de mano",
+    "stand_mixer": "Batidora de pie",
+    "bamboo_mat": "Esterilla de bambú",
+    "sharp_knife": "Cuchillo afilado",
+    "food_processor": "Robot de cocina",
+    "blender": "Licuadora",
+    "pressure_cooker": "Olla a presión",
+    "slow_cooker": "Slow cooker",
+    "wok": "Wok",
+    "cast_iron": "Hierro fundido"
   },
   "auth": {
     "title": "Ephemeral Cuisine",
