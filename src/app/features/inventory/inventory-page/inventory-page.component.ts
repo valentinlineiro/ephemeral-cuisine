@@ -45,6 +45,18 @@ export class InventoryPageComponent implements OnInit {
     this.items().filter(i => ['expired', 'today'].includes(getExpiryStatus(i.expiry_date))).length
   );
 
+  wasteInsight = computed<{ count: number; categories: string[] } | null>(() => {
+    const expiredGroup = this.groups().find(g => g.status === 'expired');
+    if (!expiredGroup || expiredGroup.items.length === 0) return null;
+    const cats = [...new Set(
+      expiredGroup.items
+        .map(i => i.category)
+        .filter(c => c !== null)
+        .map(c => c as string)
+    )];
+    return { count: expiredGroup.items.length, categories: cats };
+  });
+
   constructor(private inventory: InventoryService) {}
 
   async ngOnInit(): Promise<void> {
@@ -70,5 +82,9 @@ export class InventoryPageComponent implements OnInit {
   async deleteItem(id: string): Promise<void> {
     await this.inventory.deleteItem(id);
     await this.load();
+  }
+
+  categoryLabel(cat: string): string {
+    return 'inventory.cat_' + cat;
   }
 }

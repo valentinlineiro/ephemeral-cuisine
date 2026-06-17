@@ -13,6 +13,21 @@
     </div>
   }
 
+  @if (wasteInsight()) {
+    <div class="bg-amber-50 border border-amber-200 rounded-xl p-3 mb-4 text-sm text-amber-800">
+      <p class="font-medium">🗑️ {{ wasteInsight()!.count }} {{ 'inventory.waste_items' | translate }}</p>
+      @if (wasteInsight()!.categories.length > 0) {
+        <p class="text-xs text-amber-600 mt-1">
+          {{ 'inventory.waste_categories' | translate }}:
+          @for (cat of wasteInsight()!.categories; track cat; let last = $last) {
+            {{ categoryLabel(cat) | translate }}{{ last ? '' : ', ' }}
+          }
+        </p>
+      }
+      <p class="text-xs text-amber-600 mt-1">{{ 'inventory.waste_tip' | translate }}</p>
+    </div>
+  }
+
   @if (loading()) {
     <p class="text-gray-400 text-center py-12">{{ 'inventory.loading' | translate }}</p>
   } @else if (items().length === 0) {
