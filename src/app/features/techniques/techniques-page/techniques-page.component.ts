@@ -3,6 +3,36 @@ import { FormsModule } from '@angular/forms';
 import { TranslatePipe } from '@ngx-translate/core';
 import { Technique } from '../technique.model';
 import { TechniqueService, AddTechniqueInput } from '../technique.service';
+import { DietaryProfileService } from '../../../core/dietary-profile.service';
+
+interface BootcampTier {
+  tier: number;
+  name: string;
+  equipment: string[];
+  examples: string[];
+  unlocked: boolean;
+}
+
+const BOOTCAMP_TIER_DEFS: Array<Omit<BootcampTier, 'unlocked'>> = [
+  {
+    tier: 1,
+    name: 'No equipment',
+    equipment: [],
+    examples: ['Panna cotta', 'Chocolate mousse', 'Tiramisú', 'Truffles'],
+  },
+  {
+    tier: 2,
+    name: 'Oven + hand mixer',
+    equipment: ['oven', 'hand_mixer'],
+    examples: ['Brownies', 'Muffins', 'Cheesecake', 'Crème brûlée'],
+  },
+  {
+    tier: 3,
+    name: 'Stand mixer',
+    equipment: ['stand_mixer'],
+    examples: ['Layer cake', 'Macarons', 'Croissants', 'Laminated dough'],
+  },
+];
 
 @Component({
   selector: 'app-techniques-page',
@@ -21,10 +51,21 @@ export class TechniquesPageComponent implements OnInit {
   saving = signal(false);
   formError = signal<string | null>(null);
 
-  constructor(private techniqueService: TechniqueService) {}
+  bootcampTiers = signal<BootcampTier[]>([]);
+
+  constructor(
+    private techniqueService: TechniqueService,
+    private dietaryProfile: DietaryProfileService,
+  ) {}
 
   async ngOnInit(): Promise<void> {
     await this.load();
+    const profile = await this.dietaryProfile.getProfile();
+    const equipment = new Set(profile?.equipment ?? []);
+    this.bootcampTiers.set(BOOTCAMP_TIER_DEFS.map(t => ({
+      ...t,
+      unlocked: t.equipment.every(e => equipment.has(e)),
+    })));
   }
 
   async load(): Promise<void> {

@@ -50,4 +50,29 @@
       }
     </div>
   }
+
+  <!-- Dessert bootcamp -->
+  <section class="mt-8 mb-4">
+    <h2 class="text-sm font-semibold text-gray-500 uppercase tracking-wide mb-3">{{ 'techniques.bootcamp_title' | translate }}</h2>
+    <div class="flex flex-col gap-3">
+      @for (tier of bootcampTiers(); track tier.tier) {
+        <div [class]="tier.unlocked
+          ? 'bg-white border border-green-200 rounded-xl p-4'
+          : 'bg-gray-50 border border-gray-200 rounded-xl p-4 opacity-60'">
+          <div class="flex items-center gap-2 mb-2">
+            <span>{{ tier.unlocked ? '🔓' : '🔒' }}</span>
+            <h3 class="font-semibold text-sm text-gray-900">{{ 'techniques.bootcamp_tier' | translate }} {{ tier.tier }}: {{ tier.name }}</h3>
+          </div>
+          @if (tier.equipment.length > 0) {
+            <p class="text-xs text-gray-400 mb-2">{{ 'techniques.bootcamp_needs' | translate }}: {{ tier.equipment.join(', ') }}</p>
+          }
+          <div class="flex flex-wrap gap-1">
+            @for (ex of tier.examples; track ex) {
+              <span class="text-xs bg-gray-100 text-gray-600 rounded-full px-2 py-0.5">{{ ex }}</span>
+            }
+          </div>
+        </div>
+      }
+    </div>
+  </section>
 </div>
