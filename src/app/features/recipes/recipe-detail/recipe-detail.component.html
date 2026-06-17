@@ -1,0 +1,115 @@
+@if (loading()) {
+  <div class="flex justify-center pt-24">
+    <div class="w-8 h-8 border-2 border-primary border-t-transparent rounded-full animate-spin"></div>
+  </div>
+} @else if (recipe()) {
+  <div class="pb-24">
+    <!-- Header -->
+    <div class="relative">
+      @if (recipe()!.image_path) {
+        <img [src]="recipe()!.image_path" [alt]="recipe()!.name" class="w-full h-48 object-cover" />
+      } @else {
+        <div class="w-full h-48 bg-gray-100 flex items-center justify-center text-6xl">🍽️</div>
+      }
+      <button (click)="goBack()" class="absolute top-4 left-4 bg-white rounded-full p-2 shadow">
+        ←
+      </button>
+    </div>
+
+    <div class="px-4 pt-4">
+      <h1 class="text-2xl font-bold mb-1">{{ recipe()!.name }}</h1>
+      <p class="text-gray-500 text-sm mb-3">{{ recipe()!.description }}</p>
+
+      <!-- Meta chips -->
+      <div class="flex gap-2 flex-wrap mb-4 text-xs">
+        @if (recipe()!.total_time) {
+          <span class="bg-gray-100 rounded-full px-3 py-1">⏱ {{ recipe()!.total_time }} min</span>
+        }
+        @if (recipe()!.servings) {
+          <span class="bg-gray-100 rounded-full px-3 py-1">👥 {{ recipe()!.servings }}</span>
+        }
+        @if (recipe()!.difficulty) {
+          <span class="bg-gray-100 rounded-full px-3 py-1">{{ 'difficulty.' + recipe()!.difficulty | translate }}</span>
+        }
+        @if (recipe()!.cuisine_type) {
+          <span class="bg-gray-100 rounded-full px-3 py-1">{{ recipe()!.cuisine_type }}</span>
+        }
+      </div>
+
+      <!-- Allergens -->
+      @if (recipe()!.allergens.length > 0) {
+        <div class="flex gap-2 flex-wrap mb-4">
+          @for (a of recipe()!.allergens; track a) {
+            <span class="bg-orange-100 text-orange-800 text-xs rounded-full px-2 py-0.5">⚠ {{ a }}</span>
+          }
+        </div>
+      }
+
+      <!-- Ingredients -->
+      <h2 class="font-semibold text-base mb-2">Ingredientes</h2>
+      <ul class="mb-6 flex flex-col gap-1">
+        @for (ing of recipe()!.ingredients; track ing.name) {
+          <li class="flex gap-2 text-sm py-1 border-b border-gray-100">
+            <span class="text-gray-500 w-16 text-right flex-shrink-0">
+              {{ ing.qty ? ing.qty + ' ' + (ing.unit ?? '') : '' }}
+            </span>
+            <span class="font-medium">{{ ing.name }}</span>
+            @if (ing.prep) {
+              <span class="text-gray-400 italic">{{ ing.prep }}</span>
+            }
+          </li>
+        }
+      </ul>
+
+      <!-- Steps -->
+      <h2 class="font-semibold text-base mb-2">Pasos</h2>
+      <div class="flex flex-col gap-3 mb-8">
+        @for (group of stepGroups; track $index) {
+          @if (group.group !== null && group.steps.length > 1) {
+            <div class="border border-blue-200 rounded-xl p-3 bg-blue-50">
+              <p class="text-xs text-blue-600 font-medium mb-2">⚡ Pasos simultáneos</p>
+              @for (step of group.steps; track step.order) {
+                <div class="mb-2 last:mb-0">
+                  <span class="text-xs text-blue-400 mr-1">{{ step.order }}.</span>
+                  <span class="text-sm">{{ step.text }}</span>
+                  @if (step.time) {
+                    <span class="text-xs text-blue-400 ml-1">({{ step.time }} min)</span>
+                  }
+                </div>
+              }
+            </div>
+          } @else {
+            @for (step of group.steps; track step.order) {
+              <div class="flex gap-3">
+                <span class="w-6 h-6 bg-primary text-white rounded-full flex-shrink-0 flex items-center justify-center text-xs font-bold">
+                  {{ step.order }}
+                </span>
+                <div class="flex-1">
+                  <p class="text-sm">{{ step.text }}</p>
+                  @if (step.time) {
+                    <p class="text-xs text-gray-400 mt-0.5">{{ step.time }} min</p>
+                  }
+                </div>
+              </div>
+            }
+          }
+        }
+      </div>
+    </div>
+
+    <!-- Cooking mode button -->
+    <div class="fixed bottom-16 left-0 right-0 px-4">
+      <button (click)="cookingMode.set(true)"
+        class="w-full bg-primary text-white rounded-xl py-4 font-semibold text-base shadow-lg">
+        {{ 'recipes.start_cooking' | translate }}
+      </button>
+    </div>
+  </div>
+
+  <!-- Cooking mode overlay — will be wired up in Task 22 -->
+  @if (cookingMode()) {
+    <div class="fixed inset-0 bg-white z-50 flex items-center justify-center">
+      <button (click)="cookingMode.set(false)" class="text-primary">Salir del modo cocina</button>
+    </div>
+  }
+}
