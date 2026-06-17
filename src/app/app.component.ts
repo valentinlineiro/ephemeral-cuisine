@@ -1,13 +1,22 @@
-import { Component } from '@angular/core';
-import { RouterOutlet } from '@angular/router';
+import { Component, OnInit } from '@angular/core';
+import { RouterOutlet, RouterLink, RouterLinkActive } from '@angular/router';
+import { TranslateService, TranslatePipe } from '@ngx-translate/core';
+import { AuthService } from './core/auth.service';
 
 @Component({
   selector: 'app-root',
   standalone: true,
-  imports: [RouterOutlet],
+  imports: [RouterOutlet, RouterLink, RouterLinkActive, TranslatePipe],
   templateUrl: './app.component.html',
-  styleUrl: './app.component.scss'
 })
-export class AppComponent {
-  title = 'ephemeral-cuisine';
+export class AppComponent implements OnInit {
+  constructor(
+    private translate: TranslateService,
+    protected auth: AuthService,
+  ) {}
+
+  ngOnInit(): void {
+    const saved = localStorage.getItem('lang') ?? 'es';
+    this.translate.use(saved);
+  }
 }
