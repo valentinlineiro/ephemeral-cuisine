@@ -119,6 +119,32 @@
         </div>
       }
 
+      <!-- My version -->
+      @if (myVersion()) {
+        <div class="bg-indigo-50 border border-indigo-100 rounded-xl p-4 mb-6">
+          <div class="flex items-center justify-between mb-2">
+            <h3 class="font-semibold text-sm text-indigo-900">{{ 'recipe.my_version_title' | translate }} ({{ myVersion()!.cookCount }}×)</h3>
+            <button (click)="exportRecipe()"
+              class="text-xs bg-white border border-indigo-200 rounded-full px-3 py-1 text-indigo-700 font-medium">
+              {{ exportCopied() ? ('recipe.copied' | translate) : ('recipe.export' | translate) }}
+            </button>
+          </div>
+          @if (myVersion()!.favoriteProtein) {
+            <p class="text-xs text-indigo-700 mb-1">🥩 {{ 'recipe.fav_protein' | translate }}: <strong>{{ myVersion()!.favoriteProtein }}</strong></p>
+          }
+          @if (myVersion()!.modifications.length > 0) {
+            <div class="flex flex-wrap gap-1 mb-2">
+              @for (mod of myVersion()!.modifications; track mod) {
+                <span class="text-xs bg-white text-indigo-700 border border-indigo-200 rounded-full px-2 py-0.5">{{ mod }}</span>
+              }
+            </div>
+          }
+          @if (myVersion()!.latestNote) {
+            <p class="text-xs text-indigo-600 italic">{{ myVersion()!.latestNote }}</p>
+          }
+        </div>
+      }
+
       <!-- Steps -->
       <h2 class="font-semibold text-base mb-2">Pasos</h2>
       <div class="flex flex-col gap-3 mb-8">

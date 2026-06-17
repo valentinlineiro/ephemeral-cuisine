@@ -15,6 +15,13 @@ import { SwapEntry, getSwapsFor } from '../../health/swap-calculator';
 const PROTEIN_KEYS = ['chicken', 'salmon', 'beef', 'pork', 'tofu', 'shrimp', 'tuna',
                       'pollo', 'ternera', 'cerdo', 'gambas', 'atun', 'egg', 'huevo'];
 
+interface MyVersion {
+  cookCount: number;
+  modifications: string[];
+  latestNote: string | null;
+  favoriteProtein: string | null;
+}
+
 @Component({
   selector: 'app-recipe-detail',
   standalone: true,
@@ -33,6 +40,8 @@ export class RecipeDetailComponent implements OnInit {
   availableSwaps = computed(() =>
     this.swapIngredient() ? getSwapsFor(this.swapIngredient()!) : []
   );
+  myVersion = signal<MyVersion | null>(null);
+  exportCopied = signal(false);
 
   protected sodiumColor = sodiumColor;
   protected calorieColor = calorieColor;
@@ -66,12 +75,60 @@ export class RecipeDetailComponent implements OnInit {
         });
       }
 
+      if (cooks.length > 0) {
+        const allMods = [...new Set(cooks.flatMap(c => c.modifications ?? []).filter(Boolean))];
+        const latestNote = cooks.find(c => c.notes)?.notes ?? null;
+        const proteinCounts = new Map<string, number>();
+        for (const c of cooks) {
+          const p = c.combo.protein?.trim().toLowerCase();
+          if (p) proteinCounts.set(p, (proteinCounts.get(p) ?? 0) + 1);
+        }
+        const favoriteProtein = [...proteinCounts.entries()].sort((a, b) => b[1] - a[1])[0]?.[0] ?? null;
+        this.myVersion.set({ cookCount: cooks.length, modifications: allMods, latestNote, favoriteProtein });
+      }
+
       const proteinIng = recipe?.ingredients.find(i =>
         PROTEIN_KEYS.some(p => i.name.toLowerCase().includes(p))
       );
       if (proteinIng) this.swapIngredient.set(proteinIng.name);
     } finally {
       this.loading.set(false);
+    }
+  }
+
+  async exportRecipe(): Promise<void> {
+    const r = this.recipe();
+    if (!r) return;
+    const mv = this.myVersion();
+
+    let md = `# ${r.name}\n`;
+    if (r.cuisine_type) md += `*${r.cuisine_type}*\n\n`;
+    if (r.description) md += `${r.description}\n\n`;
+    if (r.total_time) md += `⏱ ${r.total_time} min · 👥 ${r.servings ?? 2} servings\n\n`;
+
+    md += `## Ingredients\n`;
+    for (const ing of r.ingredients) {
+      const q = ing.qty ? `${ing.qty}${ing.unit ? ' ' + ing.unit : ''} ` : '';
+      md += `- ${q}${ing.name}${ing.prep ? ' — ' + ing.prep : ''}\n`;
+    }
+
+    md += `\n## Steps\n`;
+    for (const step of [...r.steps].sort((a, b) => a.order - b.order)) {
+      md += `${step.order}. ${step.text}${step.time ? ` *(${step.time} min)*` : ''}\n`;
+    }
+
+    if (mv && mv.modifications.length > 0) {
+      md += `\n## My tweaks\n`;
+      for (const mod of mv.modifications) md += `- ${mod}\n`;
+    }
+    if (mv?.latestNote) md += `\n> ${mv.latestNote}\n`;
+
+    try {
+      await navigator.clipboard.writeText(md);
+      this.exportCopied.set(true);
+      setTimeout(() => this.exportCopied.set(false), 2000);
+    } catch {
+      // clipboard not available in test environments
     }
   }
 
