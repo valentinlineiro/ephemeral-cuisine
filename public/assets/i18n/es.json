@@ -73,7 +73,16 @@
   },
   "techniques": {
     "title": "Técnicas",
-    "coming_soon": "Próximamente: tu biblioteca de técnicas"
+    "coming_soon": "Próximamente: tu biblioteca de técnicas",
+    "name_placeholder": "Ej. Salteado, Sushi, Tagine",
+    "equipment_placeholder": "Equipamiento (ej. wok, cuchillo)",
+    "beginner": "Principiante",
+    "intermediate": "Intermedio",
+    "advanced": "Avanzado",
+    "save": "Guardar técnica",
+    "loading": "Cargando…",
+    "empty": "Aún no tienes técnicas. ¡Añade la primera!",
+    "mastery": "Maestría"
   },
   "settings": {
     "title": "Ajustes",

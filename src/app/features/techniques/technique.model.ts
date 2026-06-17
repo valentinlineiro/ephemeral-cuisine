@@ -39,3 +39,10 @@ export function calcMastery(cook_count: number, avg_rating: number): MasteryGrad
   if (avg_rating >= 8.5) return 'A';
   return 'A-';
 }
+
+export const MASTERY_COLOR: Record<MasteryGrade, string> = {
+  'A+': 'text-green-700', 'A': 'text-green-600', 'A-': 'text-green-500',
+  'B+': 'text-blue-600', 'B': 'text-blue-500', 'B-': 'text-blue-400',
+  'C+': 'text-yellow-600', 'C': 'text-yellow-500', 'C-': 'text-yellow-400',
+  'D': 'text-orange-500', 'F': 'text-red-500',
+};

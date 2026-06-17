@@ -73,7 +73,16 @@
   },
   "techniques": {
     "title": "Techniques",
-    "coming_soon": "Coming soon: your technique library"
+    "coming_soon": "Coming soon: your technique library",
+    "name_placeholder": "E.g. Stir-fry, Sushi, Tagine",
+    "equipment_placeholder": "Equipment (e.g. wok, knife)",
+    "beginner": "Beginner",
+    "intermediate": "Intermediate",
+    "advanced": "Advanced",
+    "save": "Save technique",
+    "loading": "Loading…",
+    "empty": "No techniques yet. Add the first one!",
+    "mastery": "Mastery"
   },
   "settings": {
     "title": "Settings",
