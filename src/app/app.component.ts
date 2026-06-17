@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { RouterOutlet, RouterLink, RouterLinkActive } from '@angular/router';
+import { RouterLink, RouterLinkActive, RouterOutlet } from '@angular/router';
 import { TranslateService, TranslatePipe } from '@ngx-translate/core';
 import { AuthService } from './core/auth.service';
 
@@ -10,10 +10,7 @@ import { AuthService } from './core/auth.service';
   templateUrl: './app.component.html',
 })
 export class AppComponent implements OnInit {
-  constructor(
-    private translate: TranslateService,
-    protected auth: AuthService,
-  ) {}
+  constructor(private translate: TranslateService, protected auth: AuthService) {}
 
   ngOnInit(): void {
     const saved = localStorage.getItem('lang') ?? 'es';
