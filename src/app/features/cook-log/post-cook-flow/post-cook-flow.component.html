@@ -1,0 +1,106 @@
+<div class="fixed inset-0 bg-white z-50 overflow-y-auto">
+  <div class="p-6 pb-24 max-w-lg mx-auto flex flex-col gap-6">
+    <h1 class="text-2xl font-bold text-gray-900">{{ 'cooklog.title' | translate }}</h1>
+
+    <!-- COMBO USED -->
+    <section class="flex flex-col gap-3">
+      <h2 class="text-sm font-semibold text-gray-500 uppercase tracking-wide">{{ 'cooklog.what_did_you_use' | translate }}</h2>
+      <input type="text" [ngModel]="protein()" (ngModelChange)="protein.set($event)"
+        [placeholder]="'cooklog.protein_placeholder' | translate"
+        class="border border-gray-300 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-primary focus:outline-none" />
+      <input type="text" [ngModel]="produce()" (ngModelChange)="produce.set($event)"
+        [placeholder]="'cooklog.produce_placeholder' | translate"
+        class="border border-gray-300 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-primary focus:outline-none" />
+      <input type="text" [ngModel]="seasoning()" (ngModelChange)="seasoning.set($event)"
+        [placeholder]="'cooklog.seasoning_placeholder' | translate"
+        class="border border-gray-300 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-primary focus:outline-none" />
+    </section>
+
+    <!-- WHO COOKED FOR -->
+    @if (familyMembers().length > 0) {
+      <section class="flex flex-col gap-2">
+        <h2 class="text-sm font-semibold text-gray-500 uppercase tracking-wide">{{ 'cooklog.who_ate' | translate }}</h2>
+        <div class="flex flex-wrap gap-2">
+          @for (m of familyMembers(); track m.name) {
+            <button (click)="togglePresent(m.name)"
+              [class]="familyPresent().includes(m.name)
+                ? 'px-3 py-1.5 rounded-full text-sm font-medium bg-primary text-white'
+                : 'px-3 py-1.5 rounded-full text-sm font-medium bg-gray-100 text-gray-600'">
+              {{ m.name }}
+            </button>
+          }
+        </div>
+      </section>
+    }
+
+    <!-- YOUR RATING -->
+    <section class="flex flex-col gap-2">
+      <h2 class="text-sm font-semibold text-gray-500 uppercase tracking-wide">{{ 'cooklog.your_rating' | translate }}</h2>
+      <div class="flex items-center gap-3">
+        <input type="range" min="1" max="10" step="1"
+          [ngModel]="selfRating()" (ngModelChange)="selfRating.set(+$event)"
+          class="flex-1 accent-primary" />
+        <span class="text-2xl font-bold text-primary w-8 text-center">{{ selfRating() }}</span>
+      </div>
+    </section>
+
+    <!-- FAMILY RATINGS -->
+    @for (m of familyPresent(); track m) {
+      <section class="flex flex-col gap-2">
+        <h2 class="text-sm font-semibold text-gray-500 uppercase tracking-wide">{{ m }}</h2>
+        <div class="flex items-center gap-3">
+          <input type="range" min="1" max="10" step="1"
+            [ngModel]="familyRatings()[m] ?? 7"
+            (ngModelChange)="setFamilyRating(m, +$event)"
+            class="flex-1 accent-primary" />
+          <span class="text-2xl font-bold text-primary w-8 text-center">{{ familyRatings()[m] ?? 7 }}</span>
+        </div>
+      </section>
+    }
+
+    <!-- MODIFICATIONS -->
+    <section class="flex flex-col gap-2">
+      <h2 class="text-sm font-semibold text-gray-500 uppercase tracking-wide">{{ 'cooklog.modifications' | translate }}</h2>
+      <input type="text" [ngModel]="modifications()" (ngModelChange)="modifications.set($event)"
+        [placeholder]="'cooklog.modifications_placeholder' | translate"
+        class="border border-gray-300 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-primary focus:outline-none" />
+    </section>
+
+    <!-- NOTES -->
+    <section class="flex flex-col gap-2">
+      <h2 class="text-sm font-semibold text-gray-500 uppercase tracking-wide">{{ 'cooklog.notes' | translate }}</h2>
+      <textarea [ngModel]="notes()" (ngModelChange)="notes.set($event)" rows="2"
+        [placeholder]="'cooklog.notes_placeholder' | translate"
+        class="border border-gray-300 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-primary focus:outline-none resize-none"></textarea>
+    </section>
+
+    <!-- LEFTOVERS -->
+    <section class="flex flex-col gap-2">
+      <h2 class="text-sm font-semibold text-gray-500 uppercase tracking-wide">{{ 'cooklog.leftovers' | translate }}</h2>
+      @for (l of leftovers(); track l.name; let i = $index) {
+        <div class="flex items-center gap-2 text-sm text-gray-700">
+          <span class="flex-1">{{ l.name }} — {{ l.quantity_g }}g</span>
+          <button (click)="removeLeftover(i)" class="text-red-400 text-xs">✕</button>
+        </div>
+      }
+      <div class="flex gap-2">
+        <input type="text" [ngModel]="leftoverName()" (ngModelChange)="leftoverName.set($event)"
+          [placeholder]="'cooklog.leftover_name' | translate"
+          class="flex-1 border border-gray-300 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-primary focus:outline-none" />
+        <input type="number" [ngModel]="leftoverQty()" (ngModelChange)="leftoverQty.set(+$event)"
+          class="w-20 border border-gray-300 rounded-lg px-2 py-2 text-sm focus:ring-2 focus:ring-primary focus:outline-none" />
+        <span class="self-center text-sm text-gray-500">g</span>
+        <button (click)="addLeftover()" class="bg-gray-100 text-gray-700 px-3 py-2 rounded-lg text-sm">+</button>
+      </div>
+    </section>
+
+    @if (error()) {
+      <p class="text-red-600 text-sm">{{ error() }}</p>
+    }
+
+    <button (click)="save()" [disabled]="saving()"
+      class="bg-primary text-white rounded-lg py-4 font-bold text-lg disabled:opacity-50">
+      {{ saving() ? ('cooklog.saving' | translate) : ('cooklog.save' | translate) }}
+    </button>
+  </div>
+</div>
