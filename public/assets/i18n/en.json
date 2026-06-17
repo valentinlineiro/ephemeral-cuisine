@@ -155,5 +155,24 @@
   },
   "recipe": {
     "i_cooked_this": "I finished cooking"
+  },
+  "cooklog": {
+    "title": "How did it go?",
+    "what_did_you_use": "What did you use?",
+    "protein_placeholder": "Protein (e.g. chicken, salmon)",
+    "produce_placeholder": "Vegetables (comma-separated)",
+    "seasoning_placeholder": "Main seasoning",
+    "who_ate": "Who ate?",
+    "your_rating": "Your rating",
+    "modifications": "Modifications",
+    "modifications_placeholder": "Comma-separated",
+    "notes": "Notes",
+    "notes_placeholder": "E.g. more garlic next time",
+    "leftovers": "Leftovers",
+    "leftover_name": "Name",
+    "saving": "Saving…",
+    "save": "Save cook",
+    "finish": "Done",
+    "leftover_blueprint": "Tomorrow with the leftovers:"
   }
 }

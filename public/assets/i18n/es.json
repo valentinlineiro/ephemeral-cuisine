@@ -155,5 +155,24 @@
   },
   "recipe": {
     "i_cooked_this": "Terminé de cocinar"
+  },
+  "cooklog": {
+    "title": "¿Cómo fue?",
+    "what_did_you_use": "¿Qué usaste?",
+    "protein_placeholder": "Proteína (ej. pollo, salmón)",
+    "produce_placeholder": "Verduras (separadas por comas)",
+    "seasoning_placeholder": "Condimento principal",
+    "who_ate": "¿Quién comió?",
+    "your_rating": "Tu puntuación",
+    "modifications": "Modificaciones",
+    "modifications_placeholder": "Separadas por comas",
+    "notes": "Notas",
+    "notes_placeholder": "Ej. más ajo la próxima vez",
+    "leftovers": "Sobras",
+    "leftover_name": "Nombre",
+    "saving": "Guardando…",
+    "save": "Guardar cocinada",
+    "finish": "Listo",
+    "leftover_blueprint": "Mañana con las sobras:"
   }
 }

@@ -2,7 +2,7 @@ import { Component, OnInit, input, output, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { TranslatePipe } from '@ngx-translate/core';
 import { Recipe } from '../../../features/recipes/models/recipe.model';
-import { CookLogService } from '../cook-log.service';
+import { CookLogService, LeftoverBlueprint } from '../cook-log.service';
 import { DietaryProfileService } from '../../../core/dietary-profile.service';
 import { FamilyMember } from '../../../core/models/dietary-profile.model';
 import { LeftoverItem } from '../cook-log.model';
@@ -36,6 +36,8 @@ export class PostCookFlowComponent implements OnInit {
 
   saving = signal(false);
   error = signal<string | null>(null);
+  blueprint = signal<LeftoverBlueprint | null>(null);
+  saved = signal(false);
 
   constructor(
     private cookLog: CookLogService,
@@ -69,6 +71,10 @@ export class PostCookFlowComponent implements OnInit {
     this.leftovers.update(l => l.filter((_, i) => i !== index));
   }
 
+  finish(): void {
+    this.done.emit();
+  }
+
   async save(): Promise<void> {
     this.saving.set(true);
     this.error.set(null);
@@ -94,7 +100,9 @@ export class PostCookFlowComponent implements OnInit {
           ...produceList.map(p => ({ name: p, quantity: 1 })),
         ],
       });
-      this.done.emit();
+      const bp = this.cookLog.generateLeftoverBlueprint(this.leftovers());
+      this.blueprint.set(bp);
+      this.saved.set(true);
     } catch (e: any) {
       this.error.set(e.message);
     } finally {
