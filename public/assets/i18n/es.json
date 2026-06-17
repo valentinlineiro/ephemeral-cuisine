@@ -51,7 +51,11 @@
     "go_to_inventory": "Ir al inventario",
     "expired": "caducado",
     "expires_today": "caduca hoy",
-    "expires_tomorrow": "caduca mañana"
+    "expires_tomorrow": "caduca mañana",
+    "mood_default": "Mejor",
+    "mood_comfort": "Confort",
+    "mood_adventure": "Aventura",
+    "mood_impress": "Impresionar"
   },
   "ranking": {
     "title": "Mis Mejores Platos",
@@ -63,7 +67,13 @@
     "most_improved": "Más Mejorado",
     "worth_repeating": "Vale la Pena Repetir",
     "worth_repeating_hint": "Calificación alta pero solo cocinado una vez",
-    "cooks": "cocciones"
+    "cooks": "cocciones",
+    "trend_title": "Tu tendencia",
+    "trend_protein": "Proteína dominante",
+    "trend_cuisine": "Cocina dominante",
+    "trend_cooks_month": "cocinados este mes",
+    "diversity_title": "Diversidad de sabores",
+    "diversity_try": "Prueba también"
   },
   "inventory": {
     "title": "Inventario",

@@ -51,7 +51,11 @@
     "go_to_inventory": "Go to inventory",
     "expired": "expired",
     "expires_today": "expires today",
-    "expires_tomorrow": "expires tomorrow"
+    "expires_tomorrow": "expires tomorrow",
+    "mood_default": "Best",
+    "mood_comfort": "Comfort",
+    "mood_adventure": "Adventure",
+    "mood_impress": "Impress"
   },
   "ranking": {
     "title": "My Best Dishes",
@@ -63,7 +67,13 @@
     "most_improved": "Most Improved",
     "worth_repeating": "Worth Repeating",
     "worth_repeating_hint": "High rating but only cooked once",
-    "cooks": "cooks"
+    "cooks": "cooks",
+    "trend_title": "Your trend",
+    "trend_protein": "Top protein",
+    "trend_cuisine": "Top cuisine",
+    "trend_cooks_month": "cooks this month",
+    "diversity_title": "Flavor diversity",
+    "diversity_try": "Try adding"
   },
   "inventory": {
     "title": "Inventory",
