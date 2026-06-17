@@ -6,7 +6,7 @@ import { SupabaseService } from './supabase.service';
 const mockAuth = {
   getSession: jest.fn().mockResolvedValue({ data: { session: null } }),
   onAuthStateChange: jest.fn().mockReturnValue({ data: { subscription: { unsubscribe: jest.fn() } } }),
-  signInWithOtp: jest.fn().mockResolvedValue({ error: null }),
+  signInWithPassword: jest.fn().mockResolvedValue({ error: null }),
   signOut: jest.fn().mockResolvedValue({ error: null }),
 };
 
@@ -30,9 +30,9 @@ describe('AuthService', () => {
     expect(service.user()).toBeNull();
   });
 
-  it('signIn calls supabase signInWithOtp', async () => {
-    await service.signIn('test@example.com');
-    expect(mockAuth.signInWithOtp).toHaveBeenCalledWith({ email: 'test@example.com' });
+  it('signIn calls supabase signInWithPassword', async () => {
+    await service.signIn('test@example.com', 'password123');
+    expect(mockAuth.signInWithPassword).toHaveBeenCalledWith({ email: 'test@example.com', password: 'password123' });
   });
 
   it('signOut calls supabase signOut', async () => {
