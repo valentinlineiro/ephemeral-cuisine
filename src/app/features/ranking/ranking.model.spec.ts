@@ -67,3 +67,56 @@ describe('worthRepeating', () => {
     expect(result.some(r => r.recipe_id === 'r2')).toBe(true);
   });
 });
+
+import { computeTrend, computeFlavorDiversity } from './ranking.model';
+
+const makeCookForAnalytics = (overrides: Partial<CookedVersion>): CookedVersion => ({
+  id: '1', user_id: 'u', recipe_id: 'r1', technique_id: null,
+  cooked_at: new Date().toISOString(),
+  combo: { protein: 'chicken', produce: [], seasoning: '' },
+  ratings: { self: 8 },
+  notes: null, modifications: [], nutrition: null, family_present: [], leftovers: null,
+  ...overrides,
+});
+
+describe('computeTrend', () => {
+  it('identifies dominant protein from recent cooks', () => {
+    const cooks = [
+      makeCookForAnalytics({ combo: { protein: 'chicken', produce: [], seasoning: '' } }),
+      makeCookForAnalytics({ combo: { protein: 'chicken', produce: [], seasoning: '' } }),
+      makeCookForAnalytics({ combo: { protein: 'salmon', produce: [], seasoning: '' } }),
+    ];
+    const trend = computeTrend(cooks, []);
+    expect(trend.dominantProtein).toBe('chicken');
+  });
+
+  it('counts total recent cooks', () => {
+    const cooks = [makeCookForAnalytics({}), makeCookForAnalytics({}), makeCookForAnalytics({})];
+    const trend = computeTrend(cooks, []);
+    expect(trend.cookCountRecent).toBe(3);
+  });
+});
+
+describe('computeFlavorDiversity', () => {
+  it('detects citrus from lemon in produce', () => {
+    const cooks = [makeCookForAnalytics({ combo: { protein: 'chicken', produce: ['lemon'], seasoning: '' } })];
+    const result = computeFlavorDiversity(cooks);
+    const citrus = result.categories.find(c => c.name === 'citrus');
+    expect(citrus?.count).toBeGreaterThan(0);
+  });
+
+  it('lists uncovered categories as missing', () => {
+    const cooks = [makeCookForAnalytics({ combo: { protein: 'chicken', produce: ['lemon'], seasoning: '' } })];
+    const result = computeFlavorDiversity(cooks);
+    expect(result.missing.length).toBeGreaterThan(0);
+  });
+
+  it('covers categories when diverse ingredients used', () => {
+    const cooks = [
+      makeCookForAnalytics({ combo: { protein: 'salmon', produce: ['lemon'], seasoning: 'miso' } }),
+      makeCookForAnalytics({ combo: { protein: 'chicken', produce: ['chili'], seasoning: 'cumin' } }),
+    ];
+    const result = computeFlavorDiversity(cooks);
+    expect(result.categories.filter(c => c.count > 0).length).toBeGreaterThan(0);
+  });
+});

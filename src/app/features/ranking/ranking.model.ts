@@ -114,3 +114,84 @@ export function worthRepeating(agg: Map<string, RecipeAggregate>, limit = 5): Ra
     .slice(0, limit)
     .map(a => ({ recipe_id: a.recipe_id, avg_self_rating: a.avg_self_rating, cook_count: a.cook_count }));
 }
+
+// ─── Trend + Flavor Diversity ───
+
+export interface CookTrend {
+  dominantProtein: string | null;
+  dominantCuisine: string | null;
+  cookCountRecent: number;
+  totalCooks: number;
+}
+
+export interface FlavorDiversityCategory {
+  name: string;
+  label: string;
+  count: number;
+}
+
+export interface FlavorDiversity {
+  categories: FlavorDiversityCategory[];
+  missing: string[];
+}
+
+const FLAVOR_CATEGORIES: Array<{ name: string; label: string; keywords: string[] }> = [
+  { name: 'citrus',     label: 'Citrus',     keywords: ['lemon', 'lime', 'limón', 'orange', 'naranja', 'ponzu', 'yuzu'] },
+  { name: 'umami',      label: 'Umami',      keywords: ['soy', 'miso', 'fish sauce', 'parmesan', 'anchovy', 'mushroom', 'tamari'] },
+  { name: 'warm_spice', label: 'Warm spice', keywords: ['cumin', 'coriander', 'cinnamon', 'cardamom', 'turmeric', 'garam masala'] },
+  { name: 'heat',       label: 'Heat',       keywords: ['chili', 'jalapeño', 'sriracha', 'gochujang', 'harissa', 'cayenne'] },
+  { name: 'fresh_herb', label: 'Fresh herb', keywords: ['cilantro', 'basil', 'mint', 'parsley', 'dill', 'coriander'] },
+  { name: 'sweet',      label: 'Sweet',      keywords: ['honey', 'teriyaki', 'mango', 'coconut', 'maple', 'dates'] },
+];
+
+export function computeTrend(
+  cooks: CookedVersion[],
+  recipes: Array<{ id: string; cuisine_type?: string }>,
+): CookTrend {
+  const cutoff = new Date();
+  cutoff.setDate(cutoff.getDate() - 30);
+  const recent = cooks.filter(c => new Date(c.cooked_at) >= cutoff);
+
+  const proteinCounts = new Map<string, number>();
+  for (const c of recent) {
+    const p = c.combo.protein?.trim().toLowerCase();
+    if (p) proteinCounts.set(p, (proteinCounts.get(p) ?? 0) + 1);
+  }
+  const dominantProtein = [...proteinCounts.entries()].sort((a, b) => b[1] - a[1])[0]?.[0] ?? null;
+
+  const recipeMap = new Map(recipes.map(r => [r.id, r]));
+  const cuisineCounts = new Map<string, number>();
+  for (const c of recent) {
+    if (!c.recipe_id) continue;
+    const cuisine = recipeMap.get(c.recipe_id)?.cuisine_type?.trim();
+    if (cuisine) cuisineCounts.set(cuisine, (cuisineCounts.get(cuisine) ?? 0) + 1);
+  }
+  const dominantCuisine = [...cuisineCounts.entries()].sort((a, b) => b[1] - a[1])[0]?.[0] ?? null;
+
+  return { dominantProtein, dominantCuisine, cookCountRecent: recent.length, totalCooks: cooks.length };
+}
+
+export function computeFlavorDiversity(cooks: CookedVersion[]): FlavorDiversity {
+  const counts = new Map<string, number>(FLAVOR_CATEGORIES.map(c => [c.name, 0]));
+
+  for (const cook of cooks) {
+    const allIngredients = [
+      cook.combo.protein ?? '',
+      ...(cook.combo.produce ?? []),
+      cook.combo.seasoning ?? '',
+    ].map(s => s.toLowerCase());
+
+    for (const cat of FLAVOR_CATEGORIES) {
+      if (cat.keywords.some(k => allIngredients.some(ing => ing.includes(k)))) {
+        counts.set(cat.name, (counts.get(cat.name) ?? 0) + 1);
+      }
+    }
+  }
+
+  const categories = FLAVOR_CATEGORIES.map(c => ({
+    name: c.name, label: c.label, count: counts.get(c.name) ?? 0,
+  }));
+  const missing = categories.filter(c => c.count === 0).map(c => c.label);
+
+  return { categories, missing };
+}
