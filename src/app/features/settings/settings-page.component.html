@@ -1,32 +1,104 @@
-<div class="px-4 pt-6">
-  <h1 class="text-xl font-bold mb-6">{{ 'settings.title' | translate }}</h1>
+<div class="p-6 pb-24 max-w-lg mx-auto flex flex-col gap-8">
+  <h1 class="text-2xl font-bold text-gray-900">{{ 'settings.title' | translate }}</h1>
 
-  <section class="mb-6">
-    <h2 class="text-xs font-semibold text-gray-400 uppercase tracking-wide mb-3">
-      {{ 'settings.language' | translate }}
-    </h2>
+  <!-- DIETARY PROFILE -->
+  <section class="flex flex-col gap-4">
+    <h2 class="text-base font-semibold text-gray-700 uppercase tracking-wide">{{ 'settings.dietary_title' | translate }}</h2>
+
+    <label class="flex flex-col gap-1 text-sm font-medium text-gray-700">
+      {{ 'settings.max_sodium' | translate }} (mg/día)
+      <input type="number" [ngModel]="maxSodium()" (ngModelChange)="maxSodium.set($event)" name="sodium"
+        class="border border-gray-300 rounded-lg px-3 py-2 text-base focus:ring-2 focus:ring-primary focus:outline-none" />
+    </label>
+
+    <label class="flex flex-col gap-1 text-sm font-medium text-gray-700">
+      {{ 'settings.calorie_target' | translate }} (kcal)
+      <input type="number" [ngModel]="calorieTarget()" (ngModelChange)="calorieTarget.set($event)" name="calories"
+        class="border border-gray-300 rounded-lg px-3 py-2 text-base focus:ring-2 focus:ring-primary focus:outline-none" />
+    </label>
+
+    <label class="flex flex-col gap-1 text-sm font-medium text-gray-700">
+      {{ 'settings.protein_target' | translate }} (g)
+      <input type="number" [ngModel]="proteinTarget()" (ngModelChange)="proteinTarget.set($event)" name="protein"
+        class="border border-gray-300 rounded-lg px-3 py-2 text-base focus:ring-2 focus:ring-primary focus:outline-none" />
+    </label>
+  </section>
+
+  <!-- EQUIPMENT -->
+  <section class="flex flex-col gap-3">
+    <h2 class="text-base font-semibold text-gray-700 uppercase tracking-wide">{{ 'settings.equipment_title' | translate }}</h2>
+    <div class="flex flex-wrap gap-2">
+      @for (key of equipmentKeys; track key) {
+        <button type="button" (click)="toggleEquipment(key)"
+          [class]="hasEquipment(key)
+            ? 'px-3 py-1.5 rounded-full text-sm font-medium bg-primary text-white'
+            : 'px-3 py-1.5 rounded-full text-sm font-medium bg-gray-100 text-gray-600'">
+          {{ 'equipment.' + key | translate }}
+        </button>
+      }
+    </div>
+  </section>
+
+  <!-- FAMILY MEMBERS -->
+  <section class="flex flex-col gap-3">
+    <h2 class="text-base font-semibold text-gray-700 uppercase tracking-wide">{{ 'settings.family_title' | translate }}</h2>
+
+    @for (member of familyMembers(); track member.name; let i = $index) {
+      <div class="border border-gray-200 rounded-lg p-3 flex flex-col gap-2">
+        <div class="flex items-center justify-between">
+          <span class="font-medium text-gray-800">{{ member.name }}</span>
+          <button (click)="removeFamilyMember(i)" class="text-red-500 text-sm">{{ 'settings.remove' | translate }}</button>
+        </div>
+        <div class="flex gap-3 text-sm text-gray-600">
+          <label class="flex items-center gap-1">
+            <input type="checkbox" [checked]="member.restrictions.includes('gluten_free')" (change)="toggleRestriction(i, 'gluten_free')" />
+            {{ 'settings.gluten_free' | translate }}
+          </label>
+          <label class="flex items-center gap-1">
+            <input type="checkbox" [checked]="member.restrictions.includes('lactose_free')" (change)="toggleRestriction(i, 'lactose_free')" />
+            {{ 'settings.lactose_free' | translate }}
+          </label>
+        </div>
+      </div>
+    }
+
     <div class="flex gap-2">
-      <button (click)="switchLanguage('es')"
-        [class.bg-primary]="currentLang() === 'es'" [class.text-white]="currentLang() === 'es'"
-        class="flex-1 border border-gray-300 rounded-xl py-3 font-medium transition-colors">
+      <input type="text" [ngModel]="newMemberName()" (ngModelChange)="newMemberName.set($event)" name="newMember"
+        [placeholder]="'settings.member_name_placeholder' | translate"
+        class="flex-1 border border-gray-300 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-primary focus:outline-none" />
+      <button type="button" (click)="addFamilyMember()"
+        class="bg-primary text-white px-4 py-2 rounded-lg text-sm font-medium">
+        {{ 'settings.add_member' | translate }}
+      </button>
+    </div>
+  </section>
+
+  <!-- SAVE BUTTON -->
+  @if (error()) {
+    <p class="text-red-600 text-sm">{{ error() }}</p>
+  }
+  <button (click)="saveProfile()" [disabled]="saving()"
+    class="bg-primary text-white rounded-lg py-3 font-semibold disabled:opacity-50">
+    {{ saving() ? ('settings.saving' | translate) : ('settings.save' | translate) }}
+  </button>
+
+  <!-- LANGUAGE -->
+  <section class="flex flex-col gap-3">
+    <h2 class="text-base font-semibold text-gray-700 uppercase tracking-wide">{{ 'settings.language' | translate }}</h2>
+    <div class="flex gap-3">
+      <button (click)="switchLanguage('es')" [class]="currentLang() === 'es' ? 'px-4 py-2 rounded-lg bg-primary text-white font-medium' : 'px-4 py-2 rounded-lg bg-gray-100 text-gray-700'">
         Español
       </button>
-      <button (click)="switchLanguage('en')"
-        [class.bg-primary]="currentLang() === 'en'" [class.text-white]="currentLang() === 'en'"
-        class="flex-1 border border-gray-300 rounded-xl py-3 font-medium transition-colors">
+      <button (click)="switchLanguage('en')" [class]="currentLang() === 'en' ? 'px-4 py-2 rounded-lg bg-primary text-white font-medium' : 'px-4 py-2 rounded-lg bg-gray-100 text-gray-700'">
         English
       </button>
     </div>
   </section>
 
-  <section>
-    <h2 class="text-xs font-semibold text-gray-400 uppercase tracking-wide mb-3">
-      {{ 'settings.account' | translate }}
-    </h2>
-    <p class="text-sm text-gray-600 mb-3">{{ auth.user()?.email }}</p>
-    <button (click)="signOut()"
-      class="w-full border border-red-300 text-red-600 rounded-xl py-3 font-medium">
-      {{ 'settings.sign_out' | translate }}
-    </button>
+  <!-- ACCOUNT -->
+  <section class="flex flex-col gap-3">
+    <h2 class="text-base font-semibold text-gray-700 uppercase tracking-wide">{{ 'settings.account' | translate }}</h2>
+    <p class="text-sm text-gray-500">{{ auth.user()?.email }}</p>
+    <button (click)="signOut()" class="text-red-600 font-medium text-sm text-left">{{ 'settings.sign_out' | translate }}</button>
   </section>
 </div>
