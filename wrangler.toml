@@ -1,0 +1,8 @@
+name = "ephemeral-cuisine"
+compatibility_date = "2026-06-16"
+
+[pages]
+build_output_dir = "dist/ephemeral-cuisine/browser"
+
+[env.production.vars]
+# No secrets here — Supabase keys are baked into environment.prod.ts at build time
