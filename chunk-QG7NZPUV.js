@@ -1,0 +1,1 @@
+function n(t,r){let e=t/r;return e<.35?"text-green-600":e<.6?"text-yellow-600":"text-red-600"}function l(t,r){let e=t/r;return e<.4?"text-green-600":e<.6?"text-yellow-600":"text-red-600"}function u(t,r){let e=r/3,o=t/e;return o>=.9?"text-green-600":o>=.5?"text-yellow-600":"text-red-600"}export{n as a,l as b,u as c};

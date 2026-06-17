@@ -1,0 +1,1 @@
+function i(e){if(!e)return"none";let r=new Date;r.setHours(0,0,0,0);let n=new Date(e);n.setHours(0,0,0,0);let t=Math.round((n.getTime()-r.getTime())/864e5);return t<0?"expired":t===0?"today":t===1?"tomorrow":t<=7?"this_week":"later"}export{i as a};
