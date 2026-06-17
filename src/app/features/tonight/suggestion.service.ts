@@ -6,6 +6,8 @@ import { InventoryItem, getExpiryStatus } from '../inventory/inventory.model';
 import { CookedVersion } from '../cook-log/cook-log.model';
 import { DietaryProfile } from '../../core/models/dietary-profile.model';
 
+export type MoodFilter = 'default' | 'comfort' | 'adventure' | 'impress';
+
 export interface ScoredRecipe {
   recipe: Recipe;
   score: number;
@@ -14,11 +16,30 @@ export interface ScoredRecipe {
   missingEquipment: string[];
   matchedInventoryItems: InventoryItem[];
   substitutions: string[];
+  avgSelfRating: number;
+  avgFamilyRating: number;
 }
 
 const EXPIRY_WEIGHTS: Record<string, number> = {
   expired: 10, today: 8, tomorrow: 5, this_week: 2, later: 0, none: 0,
 };
+
+export function sortByMood(items: ScoredRecipe[], mood: MoodFilter): ScoredRecipe[] {
+  const sorted = [...items];
+  switch (mood) {
+    case 'comfort':
+      return sorted.sort((a, b) => b.avgSelfRating - a.avgSelfRating);
+    case 'adventure':
+      return sorted.sort((a, b) => {
+        if (a.isNovel !== b.isNovel) return a.isNovel ? -1 : 1;
+        return b.score - a.score;
+      });
+    case 'impress':
+      return sorted.sort((a, b) => b.avgFamilyRating - a.avgFamilyRating);
+    default:
+      return sorted.sort((a, b) => b.score - a.score);
+  }
+}
 
 @Injectable({ providedIn: 'root' })
 export class SuggestionService {
@@ -27,7 +48,7 @@ export class SuggestionService {
     private dietaryProfile: DietaryProfileService,
   ) {}
 
-  async getSuggestions(): Promise<ScoredRecipe[]> {
+  async getSuggestions(mood: MoodFilter = 'default'): Promise<ScoredRecipe[]> {
     const [recipesRes, cooksRes, invRes, profile] = await Promise.all([
       this.supabase.client.from('recipes').select('*').order('name', { ascending: true }),
       this.supabase.client.from('cooked_versions').select('*').order('cooked_at', { ascending: false }),
@@ -44,9 +65,26 @@ export class SuggestionService {
     const usedCombos = new Set(cooks.map(c => `${c.recipe_id}:${c.combo.protein}:${(c.combo.produce ?? []).sort().join(',')}`));
     const ownedEquipment = new Set(profile?.equipment ?? []);
 
-    return recipes
-      .map(recipe => this.scoreRecipe(recipe, inventory, usedCombos, ownedEquipment, profile))
-      .sort((a, b) => b.score - a.score);
+    // Build per-recipe rating averages
+    const ratingsByRecipe = new Map<string, { selfSum: number; familySum: number; familyCount: number; count: number }>();
+    for (const c of cooks) {
+      if (!c.recipe_id) continue;
+      const existing = ratingsByRecipe.get(c.recipe_id) ?? { selfSum: 0, familySum: 0, familyCount: 0, count: 0 };
+      const self = c.ratings?.['self'] ?? 0;
+      const familyRatings = Object.entries(c.ratings ?? {}).filter(([k]) => k !== 'self').map(([, v]) => v);
+      ratingsByRecipe.set(c.recipe_id, {
+        selfSum: existing.selfSum + self,
+        familySum: existing.familySum + familyRatings.reduce((s, v) => s + v, 0),
+        familyCount: existing.familyCount + familyRatings.length,
+        count: existing.count + 1,
+      });
+    }
+
+    const scored = recipes.map(recipe =>
+      this.scoreRecipe(recipe, inventory, usedCombos, ownedEquipment, profile, ratingsByRecipe)
+    );
+
+    return sortByMood(scored, mood);
   }
 
   private scoreRecipe(
@@ -55,6 +93,7 @@ export class SuggestionService {
     usedCombos: Set<string>,
     ownedEquipment: Set<string>,
     profile: DietaryProfile | null,
+    ratingsByRecipe: Map<string, { selfSum: number; familySum: number; familyCount: number; count: number }>,
   ): ScoredRecipe {
     const ingredientNames = (recipe.ingredients ?? []).map((i: any) => i.name.toLowerCase());
 
@@ -88,6 +127,10 @@ export class SuggestionService {
       (missingEquipment.length === 0 ? 3 : -10) +
       matchedInventoryItems.length;
 
-    return { recipe, score, expiryScore, isNovel, missingEquipment, matchedInventoryItems, substitutions };
+    const ratings = ratingsByRecipe.get(recipe.id);
+    const avgSelfRating = ratings && ratings.count > 0 ? ratings.selfSum / ratings.count : 0;
+    const avgFamilyRating = ratings && ratings.familyCount > 0 ? ratings.familySum / ratings.familyCount : 0;
+
+    return { recipe, score, expiryScore, isNovel, missingEquipment, matchedInventoryItems, substitutions, avgSelfRating, avgFamilyRating };
   }
 }
