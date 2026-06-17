@@ -15,6 +15,16 @@
       [style.width.%]="((currentGroupIndex() + 1) / totalGroups) * 100"></div>
   </div>
 
+  <!-- Prep debt banner -->
+  @if (cookSummary.totalMin > 0) {
+    <div class="flex gap-3 text-xs text-gray-500 px-4 py-2 bg-gray-50 border-b border-gray-100">
+      <span>⏱ ~{{ cookSummary.totalMin }}min total</span>
+      @if (cookSummary.waitMin > 0) {
+        <span>· {{ cookSummary.waitMin }}min waiting</span>
+      }
+    </div>
+  }
+
   <!-- Steps -->
   <div class="flex-1 overflow-auto px-4 py-6 flex flex-col gap-4">
     @for (step of currentGroup.steps; track step.order; let i = $index) {

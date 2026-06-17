@@ -63,6 +63,18 @@ export class CookingModeComponent implements OnInit, OnDestroy {
     return this.currentGroup?.timersFinished.every(Boolean) ?? false;
   }
 
+  get cookSummary(): { totalMin: number; waitMin: number } {
+    const groups = this.stepGroups();
+    let totalMin = 0;
+    let waitMin = 0;
+    for (const g of groups) {
+      const maxTimer = g.steps.reduce((m, s) => Math.max(m, s.time ?? 0), 0);
+      totalMin += maxTimer;
+      if (maxTimer > 5) waitMin += maxTimer;
+    }
+    return { totalMin, waitMin };
+  }
+
   onTimerDone(stepIdx: number): void {
     this.stepGroups.update(groups => {
       const updated = [...groups];

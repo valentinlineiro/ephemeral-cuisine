@@ -6,6 +6,20 @@ import { InventoryCategory } from '../inventory.model';
 
 const CATEGORIES: InventoryCategory[] = ['protein', 'produce', 'dairy', 'pantry', 'spice', 'other'];
 const UNITS = ['ud', 'g', 'kg', 'ml', 'l', 'taza', 'cucharada'];
+const PAIRING_TIPS: Record<string, string> = {
+  sumac: 'Sprinkle on veggies or chicken; pairs with yogurt and onion',
+  "za'atar": 'Mix with olive oil for dipping; rub on chicken before grilling',
+  harissa: 'Spicy North African paste; great in stews, eggs, or marinades',
+  miso: 'Dissolve in warm water for glazes or soups; adds umami depth',
+  tahini: 'Blend with lemon + garlic for sauces; great in dressings or hummus',
+  gochujang: 'Korean chili paste; perfect for stir-fries and marinades',
+  tamarind: 'Sour-sweet; key in Thai peanut sauce and Indian chutneys',
+  'preserved lemon': 'Use sparingly; adds intense citrus to tagines and salads',
+  'ras el hanout': 'North African spice blend; try on lamb, chicken, or roasted carrots',
+  'black garlic': 'Sweet and earthy; blend into dressings or rub on steak',
+  shiso: 'Japanese herb with mint+basil notes; wrap sushi or top salads',
+  cardamom: 'Warm and floral; pair with chicken, rice, or desserts',
+};
 
 @Component({
   selector: 'app-add-item-form',
@@ -20,6 +34,9 @@ const UNITS = ['ud', 'g', 'kg', 'ml', 'l', 'taza', 'cucharada'];
         {{ 'inventory.name' | translate }}
         <input type="text" [(ngModel)]="name" name="name" [placeholder]="'inventory.name_placeholder' | translate"
           class="border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-primary focus:outline-none" />
+        @if (pairingTip) {
+          <p class="text-xs text-blue-600 bg-blue-50 rounded px-2 py-1 mt-1">💡 {{ pairingTip }}</p>
+        }
       </label>
 
       <div class="flex gap-3">
@@ -80,6 +97,14 @@ export class AddItemFormComponent {
   readonly categories = CATEGORIES;
   saving = signal(false);
   error = signal<string | null>(null);
+
+  get pairingTip(): string | null {
+    const lower = this.name.trim().toLowerCase();
+    for (const [key, tip] of Object.entries(PAIRING_TIPS)) {
+      if (lower.includes(key)) return tip;
+    }
+    return null;
+  }
 
   constructor(private inventory: InventoryService) {}
 
