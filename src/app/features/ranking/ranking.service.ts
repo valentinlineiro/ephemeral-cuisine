@@ -3,7 +3,7 @@ import { SupabaseService } from '../../core/supabase.service';
 import { CookedVersion } from '../cook-log/cook-log.model';
 import { Recipe } from '../recipes/models/recipe.model';
 import { Technique } from '../techniques/technique.model';
-import { RankedDish, aggregateByRecipe, topOverall, rankByAudience, rankByTechnique, mostImproved, worthRepeating } from './ranking.model';
+import { RankedDish, aggregateByRecipe, topOverall, rankByAudience, rankByTechnique, mostImproved, worthRepeating, computeTrend, computeFlavorDiversity, CookTrend, FlavorDiversity } from './ranking.model';
 import { DietaryProfileService } from '../../core/dietary-profile.service';
 
 export interface RankingData {
@@ -12,6 +12,8 @@ export interface RankingData {
   byTechnique: Array<RankedDish & { recipe: Recipe; technique: Technique }>;
   mostImproved: Array<RankedDish & { recipe: Recipe }>;
   worthRepeating: Array<RankedDish & { recipe: Recipe }>;
+  trend: CookTrend;
+  diversity: FlavorDiversity;
 }
 
 @Injectable({ providedIn: 'root' })
@@ -36,6 +38,8 @@ export class RankingService {
     const recipeMap = new Map(recipes.map(r => [r.id, r]));
     const techniqueMap = new Map(techniques.map(t => [t.id, t]));
     const agg = aggregateByRecipe(cooks);
+    const trend = computeTrend(cooks, recipes);
+    const diversity = computeFlavorDiversity(cooks);
     const familyMembers = (profile?.family_members ?? []).map(m => m.name);
 
     const enrich = (dish: RankedDish) => ({ ...dish, recipe: recipeMap.get(dish.recipe_id)! });
@@ -52,6 +56,8 @@ export class RankingService {
         .filter(d => d.recipe && d.technique),
       mostImproved: mostImproved(cooks).map(enrich).filter(validDish),
       worthRepeating: worthRepeating(agg).map(enrich).filter(validDish),
+      trend,
+      diversity,
     };
   }
 }

@@ -101,5 +101,50 @@
         </div>
       </section>
     }
+
+    <!-- CURRENT TREND -->
+    @if (data()!.trend.cookCountRecent > 0) {
+      <section class="mb-8">
+        <h2 class="text-sm font-semibold text-gray-500 uppercase tracking-wide mb-3">{{ 'ranking.trend_title' | translate }}</h2>
+        <div class="bg-white border border-gray-200 rounded-xl p-4 flex flex-col gap-2 text-sm">
+          @if (data()!.trend.dominantProtein) {
+            <div class="flex items-center gap-2">
+              <span class="text-gray-400">🥩</span>
+              <span class="text-gray-700">{{ 'ranking.trend_protein' | translate }}: <strong class="text-gray-900">{{ data()!.trend.dominantProtein }}</strong></span>
+            </div>
+          }
+          @if (data()!.trend.dominantCuisine) {
+            <div class="flex items-center gap-2">
+              <span class="text-gray-400">🌍</span>
+              <span class="text-gray-700">{{ 'ranking.trend_cuisine' | translate }}: <strong class="text-gray-900">{{ data()!.trend.dominantCuisine }}</strong></span>
+            </div>
+          }
+          <div class="flex items-center gap-2">
+            <span class="text-gray-400">🍳</span>
+            <span class="text-gray-500">{{ data()!.trend.cookCountRecent }} {{ 'ranking.trend_cooks_month' | translate }}</span>
+          </div>
+        </div>
+      </section>
+    }
+
+    <!-- FLAVOR DIVERSITY -->
+    <section class="mb-8">
+      <h2 class="text-sm font-semibold text-gray-500 uppercase tracking-wide mb-3">{{ 'ranking.diversity_title' | translate }}</h2>
+      <div class="bg-white border border-gray-200 rounded-xl p-4 flex flex-col gap-3">
+        @for (cat of data()!.diversity.categories; track cat.name) {
+          <div class="flex items-center gap-3">
+            <span class="text-xs text-gray-500 w-24 flex-shrink-0">{{ cat.label }}</span>
+            <div class="flex-1 bg-gray-100 rounded-full h-2 overflow-hidden">
+              <div class="bg-primary rounded-full h-2 transition-all"
+                [style.width]="(cat.count > 0 ? Math.min(cat.count * 20, 100) : 4) + '%'"></div>
+            </div>
+            <span class="text-xs text-gray-400 w-6 text-right">{{ cat.count }}</span>
+          </div>
+        }
+        @if (data()!.diversity.missing.length > 0) {
+          <p class="text-xs text-amber-600 mt-1">{{ 'ranking.diversity_try' | translate }}: {{ data()!.diversity.missing.join(', ') }}</p>
+        }
+      </div>
+    </section>
   }
 </div>

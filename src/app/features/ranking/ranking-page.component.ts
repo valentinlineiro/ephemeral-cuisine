@@ -12,6 +12,7 @@ import { RankingService, RankingData } from './ranking.service';
 export class RankingPageComponent implements OnInit {
   data = signal<RankingData | null>(null);
   loading = signal(true);
+  protected Math = Math;
 
   constructor(private rankingService: RankingService) {}
 
