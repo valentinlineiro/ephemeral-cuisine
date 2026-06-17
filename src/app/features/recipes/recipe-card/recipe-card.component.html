@@ -1,0 +1,26 @@
+<a [routerLink]="['/recipes', recipe().id]"
+   class="block bg-white rounded-xl border border-gray-200 overflow-hidden shadow-sm active:scale-95 transition-transform">
+  @if (recipe().image_path) {
+    <img [src]="recipe().image_path" [alt]="recipe().name"
+         class="w-full h-32 object-cover" loading="lazy" />
+  } @else {
+    <div class="w-full h-32 bg-gray-100 flex items-center justify-center text-4xl">🍽️</div>
+  }
+  <div class="p-3">
+    <div class="flex items-start justify-between gap-2">
+      <h3 class="font-semibold text-sm leading-tight">{{ recipe().name }}</h3>
+      <button (click)="$event.preventDefault(); favoriteToggled.emit(recipe().id)"
+        class="text-lg flex-shrink-0">
+        {{ recipe().is_favorite ? '★' : '☆' }}
+      </button>
+    </div>
+    <div class="flex items-center gap-2 mt-1 text-xs text-gray-500">
+      @if (recipe().total_time) {
+        <span>{{ recipe().total_time }} {{ 'recipes.minutes' | translate }}</span>
+      }
+      @if (recipe().cuisine_type) {
+        <span>· {{ recipe().cuisine_type }}</span>
+      }
+    </div>
+  </div>
+</a>

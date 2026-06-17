@@ -1,0 +1,31 @@
+<div class="flex flex-col h-full">
+  <app-ingredient-search
+    (queryChanged)="onQueryChanged($event)"
+    (ingredientsChanged)="onIngredientsChanged($event)" />
+
+  <app-recipe-filter (filterChanged)="onFilterChanged($event)" />
+
+  <div class="flex-1 overflow-auto px-4 pt-2">
+    @if (loading()) {
+      <div class="flex justify-center pt-12">
+        <div class="w-8 h-8 border-2 border-primary border-t-transparent rounded-full animate-spin"></div>
+      </div>
+    } @else if (error()) {
+      <p class="text-red-600 text-center pt-12">{{ error() }}</p>
+    } @else if (recipes().length === 0) {
+      <div class="flex flex-col items-center pt-16 text-center">
+        <span class="text-6xl mb-4">🍽️</span>
+        <p class="text-lg font-semibold text-gray-700 mb-2">{{ 'recipes.empty_title' | translate }}</p>
+        <a routerLink="/import" class="text-primary font-medium">
+          {{ 'recipes.empty_action' | translate }}
+        </a>
+      </div>
+    } @else {
+      <div class="grid grid-cols-2 gap-3 pb-4">
+        @for (recipe of recipes(); track recipe.id) {
+          <app-recipe-card [recipe]="recipe" (favoriteToggled)="onFavoriteToggled($event)" />
+        }
+      </div>
+    }
+  </div>
+</div>

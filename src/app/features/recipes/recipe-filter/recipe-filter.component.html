@@ -1,0 +1,45 @@
+<div class="px-4 pb-2">
+  <div class="flex gap-2 overflow-x-auto pb-1">
+    <button (click)="toggleFavorites()"
+      [class.bg-primary]="favorites()" [class.text-white]="favorites()"
+      class="flex-shrink-0 border border-gray-300 rounded-full px-3 py-1 text-sm whitespace-nowrap">
+      ★ {{ 'recipes.favorites' | translate }}
+    </button>
+
+    @for (t of times; track t.value) {
+      <button (click)="setMaxTime(t.value)"
+        [class.bg-primary]="selectedMaxTime() === t.value" [class.text-white]="selectedMaxTime() === t.value"
+        class="flex-shrink-0 border border-gray-300 rounded-full px-3 py-1 text-sm whitespace-nowrap">
+        {{ t.label }}
+      </button>
+    }
+
+    <button (click)="expanded.set(!expanded())"
+      class="flex-shrink-0 border border-gray-300 rounded-full px-3 py-1 text-sm whitespace-nowrap">
+      {{ 'recipes.filters' | translate }} {{ expanded() ? '▲' : '▼' }}
+    </button>
+  </div>
+
+  @if (expanded()) {
+    <div class="mt-2 flex flex-col gap-2">
+      <div class="flex gap-2 flex-wrap">
+        @for (c of cuisines; track c) {
+          <button (click)="setCuisine(c)"
+            [class.bg-primary]="selectedCuisine() === c" [class.text-white]="selectedCuisine() === c"
+            class="border border-gray-300 rounded-full px-3 py-1 text-xs">
+            {{ c }}
+          </button>
+        }
+      </div>
+      <div class="flex gap-2">
+        @for (d of difficulties; track d) {
+          <button (click)="setDifficulty(d)"
+            [class.bg-primary]="selectedDifficulty() === d" [class.text-white]="selectedDifficulty() === d"
+            class="border border-gray-300 rounded-full px-3 py-1 text-xs">
+            {{ 'difficulty.' + d | translate }}
+          </button>
+        }
+      </div>
+    </div>
+  }
+</div>
