@@ -102,7 +102,10 @@
     "cat_dairy": "Lácteo",
     "cat_pantry": "Despensa",
     "cat_spice": "Especias",
-    "cat_other": "Otro"
+    "cat_other": "Otro",
+    "waste_insight": "{{count}} ingrediente(s) caducado(s)",
+    "waste_categories": "Categorías afectadas",
+    "waste_tip": "Compra menos la próxima vez o úsalos antes"
   },
   "techniques": {
     "title": "Técnicas",
@@ -115,7 +118,10 @@
     "save": "Guardar técnica",
     "loading": "Cargando…",
     "empty": "Aún no tienes técnicas. ¡Añade la primera!",
-    "mastery": "Maestría"
+    "mastery": "Maestría",
+    "bootcamp_title": "Bootcamp de repostería",
+    "bootcamp_tier": "Nivel",
+    "bootcamp_needs": "Necesitas"
   },
   "settings": {
     "title": "Ajustes",
@@ -164,7 +170,11 @@
     "hard": "Difícil"
   },
   "recipe": {
-    "i_cooked_this": "Terminé de cocinar"
+    "i_cooked_this": "Terminé de cocinar",
+    "my_version_title": "Mi versión",
+    "fav_protein": "Proteína favorita",
+    "export": "Exportar",
+    "copied": "¡Copiado!"
   },
   "cooklog": {
     "title": "¿Cómo fue?",

@@ -102,7 +102,10 @@
     "cat_dairy": "Dairy",
     "cat_pantry": "Pantry",
     "cat_spice": "Spices",
-    "cat_other": "Other"
+    "cat_other": "Other",
+    "waste_insight": "{{count}} item(s) expired",
+    "waste_categories": "Common categories",
+    "waste_tip": "Try buying less or using these sooner"
   },
   "techniques": {
     "title": "Techniques",
@@ -115,7 +118,10 @@
     "save": "Save technique",
     "loading": "Loading…",
     "empty": "No techniques yet. Add the first one!",
-    "mastery": "Mastery"
+    "mastery": "Mastery",
+    "bootcamp_title": "Dessert bootcamp",
+    "bootcamp_tier": "Tier",
+    "bootcamp_needs": "Requires"
   },
   "settings": {
     "title": "Settings",
@@ -164,7 +170,11 @@
     "hard": "Hard"
   },
   "recipe": {
-    "i_cooked_this": "I finished cooking"
+    "i_cooked_this": "I finished cooking",
+    "my_version_title": "My version",
+    "fav_protein": "Fav protein",
+    "export": "Export",
+    "copied": "Copied!"
   },
   "cooklog": {
     "title": "How did it go?",
