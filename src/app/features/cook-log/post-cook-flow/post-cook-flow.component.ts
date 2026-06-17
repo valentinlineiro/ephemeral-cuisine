@@ -1,11 +1,13 @@
-import { Component, OnInit, input, output, signal } from '@angular/core';
+import { Component, OnInit, computed, input, output, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { TranslatePipe } from '@ngx-translate/core';
 import { Recipe } from '../../../features/recipes/models/recipe.model';
 import { CookLogService, LeftoverBlueprint } from '../cook-log.service';
 import { DietaryProfileService } from '../../../core/dietary-profile.service';
-import { FamilyMember } from '../../../core/models/dietary-profile.model';
+import { DietaryProfile, FamilyMember } from '../../../core/models/dietary-profile.model';
 import { LeftoverItem } from '../cook-log.model';
+import { estimateNutrition } from '../../health/nutrition';
+import { sodiumColor, calorieColor, proteinColor } from '../../health/health-color';
 
 @Component({
   selector: 'app-post-cook-flow',
@@ -23,6 +25,17 @@ export class PostCookFlowComponent implements OnInit {
   protein = signal('');
   produce = signal('');
   seasoning = signal('');
+  servings = signal(2);
+  profile = signal<DietaryProfile | null>(null);
+
+  estimatedNutrition = computed(() => {
+    const produceList = this.produce().split(',').map(s => s.trim()).filter(Boolean);
+    return estimateNutrition(this.protein(), produceList, this.seasoning(), this.servings());
+  });
+
+  protected sodiumColor = sodiumColor;
+  protected calorieColor = calorieColor;
+  protected proteinColor = proteinColor;
 
   selfRating = signal(7);
   familyRatings = signal<Record<string, number>>({});
@@ -45,8 +58,9 @@ export class PostCookFlowComponent implements OnInit {
   ) {}
 
   async ngOnInit(): Promise<void> {
-    const profile = await this.dietaryProfile.getProfile().catch(() => null);
-    this.familyMembers.set(profile?.family_members ?? []);
+    const p = await this.dietaryProfile.getProfile().catch(() => null);
+    this.profile.set(p);
+    this.familyMembers.set(p?.family_members ?? []);
   }
 
   togglePresent(name: string): void {
@@ -83,6 +97,7 @@ export class PostCookFlowComponent implements OnInit {
       const produceList = this.produce().split(',').map(s => s.trim()).filter(Boolean);
       const modsList = this.modifications().split(',').map(s => s.trim()).filter(Boolean);
 
+      const nutrition = this.estimatedNutrition();
       await this.cookLog.logCook({
         recipe_id: this.recipe().id,
         combo: {
@@ -93,6 +108,7 @@ export class PostCookFlowComponent implements OnInit {
         ratings,
         notes: this.notes().trim() || undefined,
         modifications: modsList,
+        nutrition: nutrition.calories > 0 ? nutrition : undefined,
         family_present: this.familyPresent(),
         leftovers: this.leftovers().length ? { items: this.leftovers() } : undefined,
         inventory_deductions: [

@@ -14,6 +14,33 @@
       <input type="text" [ngModel]="seasoning()" (ngModelChange)="seasoning.set($event)"
         [placeholder]="'cooklog.seasoning_placeholder' | translate"
         class="border border-gray-300 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-primary focus:outline-none" />
+      <label class="flex items-center gap-2 text-sm text-gray-600">
+        {{ 'cooklog.servings' | translate }}
+        <input type="number" [ngModel]="servings()" (ngModelChange)="servings.set(+$event)" min="1" max="12"
+          class="w-16 border border-gray-300 rounded-lg px-2 py-1 text-sm focus:ring-2 focus:ring-primary focus:outline-none" />
+      </label>
+      @if (estimatedNutrition().calories > 0) {
+        <div class="flex gap-3">
+          <div class="flex-1 bg-gray-50 rounded-lg px-3 py-2 text-center">
+            <p [class]="calorieColor(estimatedNutrition().calories, profile()?.calorie_target ?? 2200) + ' font-bold text-base'">
+              {{ estimatedNutrition().calories }}
+            </p>
+            <p class="text-xs text-gray-400">{{ 'health.calories' | translate }}</p>
+          </div>
+          <div class="flex-1 bg-gray-50 rounded-lg px-3 py-2 text-center">
+            <p [class]="sodiumColor(estimatedNutrition().sodium_mg, profile()?.max_sodium_mg ?? 1500) + ' font-bold text-base'">
+              {{ estimatedNutrition().sodium_mg }}mg
+            </p>
+            <p class="text-xs text-gray-400">{{ 'health.sodium' | translate }}</p>
+          </div>
+          <div class="flex-1 bg-gray-50 rounded-lg px-3 py-2 text-center">
+            <p [class]="proteinColor(estimatedNutrition().protein_g, profile()?.protein_target_g ?? 120) + ' font-bold text-base'">
+              {{ estimatedNutrition().protein_g }}g
+            </p>
+            <p class="text-xs text-gray-400">{{ 'health.protein' | translate }}</p>
+          </div>
+        </div>
+      }
     </section>
 
     <!-- WHO COOKED FOR -->
