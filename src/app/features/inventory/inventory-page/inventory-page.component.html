@@ -1,0 +1,64 @@
+<div class="p-4 pb-24">
+  <div class="flex items-center justify-between mb-4">
+    <h1 class="text-2xl font-bold text-gray-900">{{ 'inventory.title' | translate }}</h1>
+    <button (click)="showForm.set(true)"
+      class="bg-primary text-white rounded-full w-10 h-10 flex items-center justify-center text-2xl font-light shadow">
+      +
+    </button>
+  </div>
+
+  @if (urgentCount() > 0) {
+    <div class="bg-red-50 border border-red-200 rounded-lg p-3 mb-4 text-sm text-red-700">
+      ⚠️ {{ urgentCount() }} {{ 'inventory.expiry_alert' | translate }}
+    </div>
+  }
+
+  @if (loading()) {
+    <p class="text-gray-400 text-center py-12">{{ 'inventory.loading' | translate }}</p>
+  } @else if (items().length === 0) {
+    <div class="text-center py-16">
+      <p class="text-gray-400 mb-4">{{ 'inventory.empty' | translate }}</p>
+      <button (click)="showForm.set(true)" class="bg-primary text-white px-6 py-3 rounded-lg font-medium">
+        {{ 'inventory.add_first' | translate }}
+      </button>
+    </div>
+  } @else {
+    @for (group of groups(); track group.status) {
+      <section class="mb-6">
+        <h2 [class]="group.urgent ? 'text-sm font-semibold text-red-600 uppercase tracking-wide mb-2' : 'text-sm font-semibold text-gray-400 uppercase tracking-wide mb-2'">
+          {{ group.labelKey | translate }}
+        </h2>
+        <div class="flex flex-col gap-2">
+          @for (item of group.items; track item.id) {
+            <div class="bg-white border border-gray-200 rounded-lg px-4 py-3 flex items-center gap-3">
+              <div class="flex-1 min-w-0">
+                <p class="font-medium text-gray-900 truncate">{{ item.name }}</p>
+                @if (item.expiry_date) {
+                  <p [class]="group.urgent ? 'text-xs text-red-500' : 'text-xs text-gray-400'">
+                    {{ item.expiry_date }}
+                  </p>
+                }
+              </div>
+              <div class="flex items-center gap-2">
+                <button (click)="adjustQuantity(item, -1)" class="w-8 h-8 rounded-full bg-gray-100 text-gray-600 font-bold flex items-center justify-center">−</button>
+                <span class="w-16 text-center text-sm font-medium text-gray-800">{{ item.quantity }} {{ item.unit }}</span>
+                <button (click)="adjustQuantity(item, 1)" class="w-8 h-8 rounded-full bg-gray-100 text-gray-600 font-bold flex items-center justify-center">+</button>
+              </div>
+              <button (click)="deleteItem(item.id)" class="text-red-400 ml-2">
+                <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+                  <path fill-rule="evenodd" d="M8.75 1A2.75 2.75 0 0 0 6 3.75v.443c-.795.077-1.584.176-2.365.298a.75.75 0 1 0 .23 1.482l.149-.022.841 10.518A2.75 2.75 0 0 0 7.596 19h4.807a2.75 2.75 0 0 0 2.742-2.53l.841-10.52.149.023a.75.75 0 0 0 .23-1.482A41.03 41.03 0 0 0 14 4.193V3.75A2.75 2.75 0 0 0 11.25 1h-2.5ZM10 4c.84 0 1.673.025 2.5.075V3.75c0-.69-.56-1.25-1.25-1.25h-2.5c-.69 0-1.25.56-1.25 1.25v.325C8.327 4.025 9.16 4 10 4ZM8.58 7.72a.75.75 0 0 0-1.5.06l.3 7.5a.75.75 0 1 0 1.5-.06l-.3-7.5Zm4.34.06a.75.75 0 1 0-1.5-.06l-.3 7.5a.75.75 0 1 0 1.5.06l.3-7.5Z" clip-rule="evenodd"/>
+                </svg>
+              </button>
+            </div>
+          }
+        </div>
+      </section>
+    }
+  }
+</div>
+
+@if (showForm()) {
+  <app-add-item-form
+    (saved)="showForm.set(false); load()"
+    (cancelled)="showForm.set(false)" />
+}
