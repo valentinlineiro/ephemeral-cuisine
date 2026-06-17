@@ -13,6 +13,6 @@ export const appConfig: ApplicationConfig = {
     provideTranslateService({
       lang: 'es',
     }),
-    provideTranslateHttpLoader(),
+    provideTranslateHttpLoader({ prefix: 'assets/i18n/' }),
   ],
 };
