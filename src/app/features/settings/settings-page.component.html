@@ -1,0 +1,32 @@
+<div class="px-4 pt-6">
+  <h1 class="text-xl font-bold mb-6">{{ 'settings.title' | translate }}</h1>
+
+  <section class="mb-6">
+    <h2 class="text-xs font-semibold text-gray-400 uppercase tracking-wide mb-3">
+      {{ 'settings.language' | translate }}
+    </h2>
+    <div class="flex gap-2">
+      <button (click)="switchLanguage('es')"
+        [class.bg-primary]="currentLang() === 'es'" [class.text-white]="currentLang() === 'es'"
+        class="flex-1 border border-gray-300 rounded-xl py-3 font-medium transition-colors">
+        Español
+      </button>
+      <button (click)="switchLanguage('en')"
+        [class.bg-primary]="currentLang() === 'en'" [class.text-white]="currentLang() === 'en'"
+        class="flex-1 border border-gray-300 rounded-xl py-3 font-medium transition-colors">
+        English
+      </button>
+    </div>
+  </section>
+
+  <section>
+    <h2 class="text-xs font-semibold text-gray-400 uppercase tracking-wide mb-3">
+      {{ 'settings.account' | translate }}
+    </h2>
+    <p class="text-sm text-gray-600 mb-3">{{ auth.user()?.email }}</p>
+    <button (click)="signOut()"
+      class="w-full border border-red-300 text-red-600 rounded-xl py-3 font-medium">
+      {{ 'settings.sign_out' | translate }}
+    </button>
+  </section>
+</div>
