@@ -1,0 +1,47 @@
+<div class="p-4 max-w-lg mx-auto">
+  <h1 class="text-xl font-bold mb-4">{{ 'import.title' | translate }}</h1>
+
+  <div
+    (dragover)="onDragOver($event)"
+    (dragleave)="onDragLeave()"
+    (drop)="onDrop($event)"
+    [class.border-primary]="dragOver()"
+    class="border-2 border-dashed border-gray-300 rounded-xl p-8 text-center mb-4 transition-colors">
+    <p class="text-gray-500 mb-3">{{ 'import.drop_hint' | translate }}</p>
+    <label class="cursor-pointer bg-primary text-white rounded-lg px-4 py-2 text-sm font-medium">
+      {{ 'import.browse' | translate }}
+      <input type="file" accept=".json,.md" class="hidden" (change)="onFileChange($event)" />
+    </label>
+  </div>
+
+  @if (uploading()) {
+    <div class="flex items-center gap-2 text-sm text-gray-600 mb-4">
+      <div class="w-4 h-4 border-2 border-primary border-t-transparent rounded-full animate-spin"></div>
+      Subiendo...
+    </div>
+  }
+
+  @if (error()) {
+    <p class="text-red-600 text-sm mb-4 p-3 bg-red-50 rounded-lg">{{ error() }}</p>
+  }
+
+  @if (jobs().length > 0) {
+    <h2 class="font-semibold mb-2">{{ 'import.history_title' | translate }}</h2>
+    <ul class="flex flex-col gap-2">
+      @for (job of jobs(); track job.id) {
+        <li class="bg-white border border-gray-200 rounded-lg p-3">
+          <div class="flex items-center justify-between mb-1">
+            <span class="text-sm font-medium truncate">{{ job.file_path.split('/').pop() }}</span>
+            <span [class]="'text-xs px-2 py-0.5 rounded-full font-medium ' + statusClass(job.status)">
+              {{ 'import.status_' + job.status | translate }}
+            </span>
+          </div>
+          <p class="text-xs text-gray-400">{{ job.created_at | date:'short' }}</p>
+          @if (job.status === 'error' && job.error_msg) {
+            <p class="text-xs text-red-600 mt-1 font-mono">{{ job.error_msg }}</p>
+          }
+        </li>
+      }
+    </ul>
+  }
+</div>
