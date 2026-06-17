@@ -7,7 +7,6 @@ import { environment } from '../../environments/environment';
 export class SupabaseService {
   readonly client: SupabaseClient = createClient(
     environment.supabase.url,
-    environment.supabase.anonKey,
-    { auth: { flowType: 'implicit' } }
+    environment.supabase.anonKey
   );
 }

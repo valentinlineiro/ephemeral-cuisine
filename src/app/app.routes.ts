@@ -3,6 +3,7 @@ import { authGuard } from './core/auth.guard';
 
 export const routes: Routes = [
   { path: 'login', loadComponent: () => import('./features/auth/login-page.component').then(m => m.LoginPageComponent) },
+  { path: 'auth/callback', loadComponent: () => import('./features/auth/auth-callback.component').then(m => m.AuthCallbackComponent) },
   {
     path: '',
     canActivate: [authGuard],
