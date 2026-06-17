@@ -28,6 +28,18 @@
       </a>
     </div>
   } @else {
+    <!-- Mood selector -->
+    <div class="flex gap-2 mb-4 overflow-x-auto">
+      @for (m of moodOptions; track m[0]) {
+        <button (click)="setMood(m[0])"
+          [class]="mood() === m[0]
+            ? 'flex-shrink-0 px-3 py-1.5 rounded-full text-xs font-semibold bg-primary text-white'
+            : 'flex-shrink-0 px-3 py-1.5 rounded-full text-xs font-semibold bg-gray-100 text-gray-600'">
+          {{ m[1] }} {{ 'tonight.mood_' + m[0] | translate }}
+        </button>
+      }
+    </div>
+
     <!-- Main suggestion card -->
     <div class="bg-white border border-gray-200 rounded-2xl p-5 shadow-sm mb-4">
       <div class="flex items-start justify-between mb-3">
@@ -37,6 +49,13 @@
             @else { {{ 'tonight.familiar' | translate }} }
           </p>
           <h2 class="text-xl font-bold text-gray-900">{{ current()!.recipe.name }}</h2>
+          @if (currentFlavors().length > 0) {
+            <div class="flex gap-1 flex-wrap mb-2">
+              @for (f of currentFlavors(); track f) {
+                <span class="text-xs bg-amber-50 text-amber-700 rounded-full px-2 py-0.5">{{ f }}</span>
+              }
+            </div>
+          }
         </div>
         @if (current()!.expiryScore > 5) {
           <span class="bg-red-100 text-red-700 text-xs px-2 py-1 rounded-full font-medium ml-2">

@@ -1,7 +1,8 @@
 import { Component, OnInit, computed, signal } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { TranslatePipe } from '@ngx-translate/core';
-import { SuggestionService, ScoredRecipe } from './suggestion.service';
+import { SuggestionService, ScoredRecipe, MoodFilter } from './suggestion.service';
+import { predictFlavors } from './flavor-predictor';
 import { InventoryItem, getExpiryStatus } from '../inventory/inventory.model';
 import { SupabaseService } from '../../core/supabase.service';
 import { DietaryProfileService } from '../../core/dietary-profile.service';
@@ -23,8 +24,24 @@ export class TonightPageComponent implements OnInit {
   weeklySummary = signal<WeeklySummary | null>(null);
   profile = signal<DietaryProfile | null>(null);
 
+  mood = signal<MoodFilter>('default');
+
+  readonly moodOptions: Array<[MoodFilter, string]> = [
+    ['default', '🎯'], ['comfort', '🛋️'], ['adventure', '✨'], ['impress', '⭐']
+  ];
+
   current = computed(() => this.suggestions()[this.currentIndex()] ?? null);
   hasAlternatives = computed(() => this.suggestions().length > 1);
+
+  currentFlavors = computed(() => {
+    const s = this.current();
+    if (!s) return [];
+    const names = [
+      ...s.recipe.ingredients.map((i: any) => i.name),
+      ...s.matchedInventoryItems.map(i => i.name),
+    ];
+    return predictFlavors(names);
+  });
 
   protected getExpiryStatus = getExpiryStatus;
   protected sodiumColor = sodiumColor;
@@ -40,7 +57,7 @@ export class TonightPageComponent implements OnInit {
   async ngOnInit(): Promise<void> {
     this.loading.set(true);
     const [suggestions, invRes, profile] = await Promise.all([
-      this.suggestionService.getSuggestions(),
+      this.suggestionService.getSuggestions(this.mood()),
       this.supabase.client.from('inventory_items').select('*').order('expiry_date', { ascending: true }),
       this.dietaryProfile.getProfile().catch(() => null),
     ]);
@@ -56,6 +73,15 @@ export class TonightPageComponent implements OnInit {
 
     // Load weekly summary in background (non-blocking)
     this.healthService.getWeeklySummary(profile).then(s => this.weeklySummary.set(s)).catch(() => null);
+  }
+
+  async setMood(m: MoodFilter): Promise<void> {
+    this.mood.set(m);
+    this.loading.set(true);
+    this.currentIndex.set(0);
+    const suggestions = await this.suggestionService.getSuggestions(m);
+    this.suggestions.set(suggestions);
+    this.loading.set(false);
   }
 
   next(): void {
