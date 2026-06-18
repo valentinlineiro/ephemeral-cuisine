@@ -22,11 +22,11 @@
           {{ 'timeline.target_time' | translate }}
         </label>
         <input type="text" [ngModel]="targetTimeStr()"
-          (ngModelChange)="targetTimeStr.set($event); targetTimeError.set(null)"
+          (ngModelChange)="targetTimeStr.set($event)"
           placeholder="20:30"
           class="border border-gray-300 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-primary focus:outline-none w-28" />
         @if (targetTimeError()) {
-          <p class="text-red-600 text-xs mt-1">Formato inválido. Usa HH:MM (00:00 – 23:59)</p>
+          <p class="text-red-600 text-xs mt-1">{{ 'timeline.target_time_error' | translate }}</p>
         }
       </section>
 

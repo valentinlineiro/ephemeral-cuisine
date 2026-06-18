@@ -206,5 +206,8 @@
     "protein_days": "días proteína",
     "swap_title": "¿Qué pasa si cambias",
     "per_serving": "por ración"
+  },
+  "timeline": {
+    "target_time_error": "Formato inválido. Usa HH:MM (00:00 – 23:59)"
   }
 }

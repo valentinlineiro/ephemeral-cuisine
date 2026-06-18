@@ -206,5 +206,8 @@
     "protein_days": "protein days",
     "swap_title": "What if you swapped",
     "per_serving": "per serving"
+  },
+  "timeline": {
+    "target_time_error": "Invalid format. Use HH:MM (00:00 – 23:59)"
   }
 }
