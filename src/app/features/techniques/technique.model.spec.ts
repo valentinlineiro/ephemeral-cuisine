@@ -1,4 +1,4 @@
-import { calcMastery } from './technique.model';
+import { calcMastery, getNextStep } from './technique.model';
 
 describe('calcMastery', () => {
   it('F for 0 cooks', () => expect(calcMastery(0, 0)).toBe('F'));
@@ -12,4 +12,34 @@ describe('calcMastery', () => {
   it('A- for 10 cooks avg 8', () => expect(calcMastery(10, 8)).toBe('A-'));
   it('A for 12 cooks avg 9', () => expect(calcMastery(12, 9)).toBe('A'));
   it('A+ for 15 cooks avg 9.5', () => expect(calcMastery(15, 9.5)).toBe('A+'));
+});
+
+describe('getNextStep', () => {
+  it('returns null for grade below B+', () => {
+    expect(getNextStep('stir-fry', 'B')).toBeNull();
+  });
+
+  it('returns null for F grade', () => {
+    expect(getNextStep('pasta', 'F')).toBeNull();
+  });
+
+  it('returns suggestion at B+ threshold', () => {
+    expect(getNextStep('stir-fry', 'B+')).toBe('Wok hei technique');
+  });
+
+  it('returns suggestion at A grade', () => {
+    expect(getNextStep('sushi roll', 'A')).toBe('Inside-out roll (uramaki)');
+  });
+
+  it('returns null when no keyword matches (A+ grade)', () => {
+    expect(getNextStep('tagine', 'A+')).toBeNull();
+  });
+
+  it('is case-insensitive', () => {
+    expect(getNextStep('Stir-Fry', 'A')).toBe('Wok hei technique');
+  });
+
+  it('matches partial keyword (brais matches braising)', () => {
+    expect(getNextStep('braising', 'B+')).toBe('Pressure cooking');
+  });
 });

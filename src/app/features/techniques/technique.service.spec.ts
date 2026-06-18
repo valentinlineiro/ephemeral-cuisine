@@ -31,6 +31,25 @@ function makeClient(listResult: unknown, singleResult: unknown = null, mutateRes
   };
 }
 
+function makeBatchClient(
+  techResult: { data: unknown; error: null },
+  cooksResult: { data: unknown; error: null },
+) {
+  return {
+    from: (table: string) => {
+      if (table === 'techniques') {
+        return {
+          select: (_: string) => ({
+            order: (_2: string, _3: unknown) => Promise.resolve(techResult),
+          }),
+        };
+      }
+      // cooked_versions
+      return { select: (_: string) => Promise.resolve(cooksResult) };
+    },
+  };
+}
+
 describe('TechniqueService', () => {
   function setup(l: unknown, s: unknown = null, m: unknown = null) {
     TestBed.configureTestingModule({
@@ -61,5 +80,70 @@ describe('TechniqueService', () => {
   it('deleteTechnique sends delete', async () => {
     const svc = setup({ data: [], error: null }, null, { error: null });
     await expect(svc.deleteTechnique('t1')).resolves.not.toThrow();
+  });
+});
+
+describe('TechniqueService.getTechniquesWithStats', () => {
+  function setupBatch(
+    techResult: { data: unknown; error: null },
+    cooksResult: { data: unknown; error: null },
+  ) {
+    TestBed.configureTestingModule({
+      providers: [
+        TechniqueService,
+        { provide: SupabaseService, useValue: { client: makeBatchClient(techResult, cooksResult) } },
+      ],
+    });
+    return TestBed.inject(TechniqueService);
+  }
+
+  it('returns empty array when no techniques', async () => {
+    const svc = setupBatch({ data: [], error: null }, { data: [], error: null });
+    expect(await svc.getTechniquesWithStats()).toEqual([]);
+  });
+
+  it('computes cook_count from linked cooked_versions', async () => {
+    const svc = setupBatch(
+      { data: [technique], error: null },
+      { data: [
+        { technique_id: 't1', ratings: { self: 8 } },
+        { technique_id: 't1', ratings: { self: 9 } },
+      ], error: null },
+    );
+    const result = await svc.getTechniquesWithStats();
+    expect(result[0].cook_count).toBe(2);
+  });
+
+  it('computes avg_rating from self ratings', async () => {
+    const svc = setupBatch(
+      { data: [technique], error: null },
+      { data: [
+        { technique_id: 't1', ratings: { self: 8 } },
+        { technique_id: 't1', ratings: { self: 10 } },
+      ], error: null },
+    );
+    const result = await svc.getTechniquesWithStats();
+    expect(result[0].avg_rating).toBe(9);
+  });
+
+  it('computes mastery grade (5 cooks avg 9 → B+)', async () => {
+    const svc = setupBatch(
+      { data: [technique], error: null },
+      {
+        data: Array.from({ length: 5 }, () => ({ technique_id: 't1', ratings: { self: 9 } })),
+        error: null,
+      },
+    );
+    const result = await svc.getTechniquesWithStats();
+    expect(result[0].mastery).toBe('B+');
+  });
+
+  it('ignores cooks with null technique_id', async () => {
+    const svc = setupBatch(
+      { data: [technique], error: null },
+      { data: [{ technique_id: null, ratings: { self: 9 } }], error: null },
+    );
+    const result = await svc.getTechniquesWithStats();
+    expect(result[0].cook_count).toBe(0);
   });
 });

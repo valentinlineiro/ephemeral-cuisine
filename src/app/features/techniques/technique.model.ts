@@ -46,3 +46,24 @@ export const MASTERY_COLOR: Record<MasteryGrade, string> = {
   'C+': 'text-yellow-600', 'C': 'text-yellow-500', 'C-': 'text-yellow-400',
   'D': 'text-orange-500', 'F': 'text-red-500',
 };
+
+const NUDGE_GRADES = new Set<MasteryGrade>(['B+', 'A-', 'A', 'A+']);
+
+const NEXT_STEP_TABLE: Array<{ keyword: string; next: string }> = [
+  { keyword: 'stir-fry',  next: 'Wok hei technique' },
+  { keyword: 'sushi',     next: 'Inside-out roll (uramaki)' },
+  { keyword: 'pasta',     next: 'Fresh pasta from scratch' },
+  { keyword: 'roast',     next: 'Spatchcock & dry brine' },
+  { keyword: 'grill',     next: 'Reverse sear' },
+  { keyword: 'baking',    next: 'Laminated dough' },
+  { keyword: 'omelette',  next: 'French omelette' },
+  { keyword: 'pan sauce', next: 'Beurre blanc' },
+  { keyword: 'brais',     next: 'Pressure cooking' },
+  { keyword: 'knife',     next: 'Brunoise & chiffonade' },
+];
+
+export function getNextStep(techniqueName: string, mastery: MasteryGrade): string | null {
+  if (!NUDGE_GRADES.has(mastery)) return null;
+  const lower = techniqueName.toLowerCase();
+  return NEXT_STEP_TABLE.find(e => lower.includes(e.keyword))?.next ?? null;
+}

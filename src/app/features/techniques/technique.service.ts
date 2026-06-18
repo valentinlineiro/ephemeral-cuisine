@@ -22,6 +22,25 @@ export class TechniqueService {
     return data ?? [];
   }
 
+  async getTechniquesWithStats(): Promise<TechniqueWithStats[]> {
+    const [techRes, cooksRes] = await Promise.all([
+      this.supabase.client.from('techniques').select('*').order('name', { ascending: true }),
+      this.supabase.client.from('cooked_versions').select('technique_id, ratings'),
+    ]);
+    const techniques: Technique[] = techRes.data ?? [];
+    const cooks: Array<{ technique_id: string | null; ratings: Record<string, number> }> = cooksRes.data ?? [];
+
+    return techniques.map(t => {
+      const tc = cooks.filter(c => c.technique_id === t.id);
+      const selfRatings = tc.map(c => c.ratings?.['self'] ?? 0).filter(r => r > 0);
+      const cook_count = tc.length;
+      const avg_rating = selfRatings.length
+        ? selfRatings.reduce((a, b) => a + b, 0) / selfRatings.length
+        : 0;
+      return { ...t, cook_count, avg_rating, mastery: calcMastery(cook_count, avg_rating) };
+    });
+  }
+
   async getTechniqueWithStats(id: string): Promise<TechniqueWithStats> {
     const [techniqueRes, cookRes] = await Promise.all([
       this.supabase.client.from('techniques').select('*').eq('id', id).single(),
