@@ -49,6 +49,11 @@
             @else { {{ 'tonight.familiar' | translate }} }
           </p>
           <h2 class="text-xl font-bold text-gray-900">{{ current()!.recipe.name }}</h2>
+          @if (current()!.predictedRating !== null) {
+            <p class="text-sm text-amber-600 font-medium mb-1">
+              {{ 'tonight.predicted_rating' | translate: { rating: current()!.predictedRating } }}
+            </p>
+          }
           @if (currentFlavors().length > 0) {
             <div class="flex gap-1 flex-wrap mb-2">
               @for (f of currentFlavors(); track f) {

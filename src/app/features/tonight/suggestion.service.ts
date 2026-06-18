@@ -5,6 +5,7 @@ import { Recipe } from '../recipes/models/recipe.model';
 import { InventoryItem, getExpiryStatus } from '../inventory/inventory.model';
 import { CookedVersion } from '../cook-log/cook-log.model';
 import { DietaryProfile } from '../../core/models/dietary-profile.model';
+import { extractProtein, predictRating } from './combo-predictor';
 
 export type MoodFilter = 'default' | 'comfort' | 'adventure' | 'impress';
 
@@ -18,6 +19,7 @@ export interface ScoredRecipe {
   substitutions: string[];
   avgSelfRating: number;
   avgFamilyRating: number;
+  predictedRating: number | null;
 }
 
 const EXPIRY_WEIGHTS: Record<string, number> = {
@@ -65,7 +67,6 @@ export class SuggestionService {
     const usedCombos = new Set(cooks.map(c => `${c.recipe_id}:${c.combo.protein}:${(c.combo.produce ?? []).sort().join(',')}`));
     const ownedEquipment = new Set(profile?.equipment ?? []);
 
-    // Build per-recipe rating averages
     const ratingsByRecipe = new Map<string, { selfSum: number; familySum: number; familyCount: number; count: number }>();
     for (const c of cooks) {
       if (!c.recipe_id) continue;
@@ -80,8 +81,10 @@ export class SuggestionService {
       });
     }
 
+    const recipeCuisineMap = new Map(recipes.map(r => [r.id, r.cuisine_type]));
+
     const scored = recipes.map(recipe =>
-      this.scoreRecipe(recipe, inventory, usedCombos, ownedEquipment, profile, ratingsByRecipe)
+      this.scoreRecipe(recipe, inventory, usedCombos, ownedEquipment, profile, ratingsByRecipe, cooks, recipeCuisineMap)
     );
 
     return sortByMood(scored, mood);
@@ -94,6 +97,8 @@ export class SuggestionService {
     ownedEquipment: Set<string>,
     profile: DietaryProfile | null,
     ratingsByRecipe: Map<string, { selfSum: number; familySum: number; familyCount: number; count: number }>,
+    cooks: CookedVersion[],
+    recipeCuisineMap: Map<string, string | undefined>,
   ): ScoredRecipe {
     const ingredientNames = (recipe.ingredients ?? []).map((i: any) => i.name.toLowerCase());
 
@@ -131,6 +136,9 @@ export class SuggestionService {
     const avgSelfRating = ratings && ratings.count > 0 ? ratings.selfSum / ratings.count : 0;
     const avgFamilyRating = ratings && ratings.familyCount > 0 ? ratings.familySum / ratings.familyCount : 0;
 
-    return { recipe, score, expiryScore, isNovel, missingEquipment, matchedInventoryItems, substitutions, avgSelfRating, avgFamilyRating };
+    const targetProtein = extractProtein(ingredientNames);
+    const predictedRating = predictRating(cooks, recipeCuisineMap, targetProtein, recipe.cuisine_type);
+
+    return { recipe, score, expiryScore, isNovel, missingEquipment, matchedInventoryItems, substitutions, avgSelfRating, avgFamilyRating, predictedRating };
   }
 }
