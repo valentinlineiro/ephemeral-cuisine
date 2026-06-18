@@ -131,10 +131,6 @@ export class MultiDishTimelineComponent implements OnInit, OnDestroy {
       cd[s.dish.id] = Math.max(0, Math.round((s.startAt.getTime() - Date.now()) / 60_000));
     }
     this.countdowns.set(cd);
-    if (this.slots().length > 0 && this.slots().every(s => s.status === 'started')) {
-      if (this.tickInterval) clearInterval(this.tickInterval);
-      this.phase.set('done');
-    }
   }
 
   dismissAlert(slot: TimelineSlot): void {
