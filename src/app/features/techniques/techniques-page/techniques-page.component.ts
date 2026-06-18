@@ -1,7 +1,7 @@
 import { Component, OnInit, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { TranslatePipe } from '@ngx-translate/core';
-import { Technique } from '../technique.model';
+import { Technique, TechniqueWithStats, MasteryGrade, MASTERY_COLOR, getNextStep } from '../technique.model';
 import { TechniqueService, AddTechniqueInput } from '../technique.service';
 import { DietaryProfileService } from '../../../core/dietary-profile.service';
 
@@ -41,7 +41,7 @@ const BOOTCAMP_TIER_DEFS: Array<Omit<BootcampTier, 'unlocked'>> = [
   templateUrl: './techniques-page.component.html',
 })
 export class TechniquesPageComponent implements OnInit {
-  techniques = signal<Technique[]>([]);
+  techniques = signal<TechniqueWithStats[]>([]);
   loading = signal(true);
   showForm = signal(false);
 
@@ -52,6 +52,9 @@ export class TechniquesPageComponent implements OnInit {
   formError = signal<string | null>(null);
 
   bootcampTiers = signal<BootcampTier[]>([]);
+
+  protected masteryColor = (m: MasteryGrade): string => MASTERY_COLOR[m];
+  protected nextStep = (t: TechniqueWithStats): string | null => getNextStep(t.name, t.mastery);
 
   constructor(
     private techniqueService: TechniqueService,
@@ -70,7 +73,7 @@ export class TechniquesPageComponent implements OnInit {
 
   async load(): Promise<void> {
     this.loading.set(true);
-    this.techniques.set(await this.techniqueService.getTechniques());
+    this.techniques.set(await this.techniqueService.getTechniquesWithStats());
     this.loading.set(false);
   }
 

@@ -125,7 +125,9 @@
     "mastery": "Mastery",
     "bootcamp_title": "Dessert bootcamp",
     "bootcamp_tier": "Tier",
-    "bootcamp_needs": "Requires"
+    "bootcamp_needs": "Requires",
+    "cooks": "cooks",
+    "next_step": "Try next"
   },
   "settings": {
     "title": "Settings",

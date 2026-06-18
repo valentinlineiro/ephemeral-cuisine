@@ -125,7 +125,9 @@
     "mastery": "Maestría",
     "bootcamp_title": "Bootcamp de repostería",
     "bootcamp_tier": "Nivel",
-    "bootcamp_needs": "Necesitas"
+    "bootcamp_needs": "Necesitas",
+    "cooks": "cocciones",
+    "next_step": "Prueba después"
   },
   "settings": {
     "title": "Ajustes",
