@@ -1,0 +1,144 @@
+<!-- src/app/features/timeline/multi-dish-timeline.component.html -->
+<div class="fixed inset-0 bg-white z-50 overflow-y-auto">
+  <div class="p-6 pb-24 max-w-lg mx-auto flex flex-col gap-6">
+
+    <!-- Alert banner — sticky, one at a time -->
+    @if (phase() === 'active' && currentAlert()) {
+      <div class="sticky top-0 bg-orange-500 text-white rounded-xl p-4 flex items-center justify-between shadow-lg z-10 cursor-pointer"
+           (click)="dismissAlert(currentAlert()!)">
+        <p class="font-bold text-base">{{ 'timeline.alert_banner' | translate: { name: currentAlert()!.dish.name } }}</p>
+        <span class="text-2xl font-bold ml-4">✓</span>
+      </div>
+    }
+
+    <h1 class="text-2xl font-bold text-gray-900">{{ 'timeline.title' | translate }}</h1>
+
+    <!-- ── SETUP PHASE ── -->
+    @if (phase() === 'setup') {
+
+      <!-- Target time -->
+      <section class="flex flex-col gap-1">
+        <label class="text-sm font-semibold text-gray-500 uppercase tracking-wide">
+          {{ 'timeline.target_time' | translate }}
+        </label>
+        <input type="text" [ngModel]="targetTimeStr()"
+          (ngModelChange)="targetTimeStr.set($event); targetTimeError.set(null)"
+          placeholder="20:30"
+          class="border border-gray-300 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-primary focus:outline-none w-28" />
+        @if (targetTimeError()) {
+          <p class="text-red-600 text-xs mt-1">Formato inválido. Usa HH:MM (00:00 – 23:59)</p>
+        }
+      </section>
+
+      <!-- Dish list -->
+      @if (dishes().length > 0) {
+        <section class="flex flex-col gap-2">
+          @for (dish of dishes(); track dish.id) {
+            <div class="flex items-center gap-3 bg-gray-50 rounded-lg px-3 py-2">
+              <span class="flex-1 text-sm font-medium text-gray-800">{{ dish.name }}</span>
+              <span class="text-xs text-gray-400">{{ dish.cookMinutes }} min</span>
+              <button (click)="removeDish(dish.id)" class="text-red-400 text-xs px-1">✕</button>
+            </div>
+          }
+        </section>
+      }
+
+      <!-- Add from library -->
+      <section class="flex flex-col gap-2">
+        <button (click)="showLibrary.set(!showLibrary())"
+          class="text-sm text-primary font-medium text-left">
+          + {{ 'timeline.add_from_library' | translate }}
+        </button>
+        @if (showLibrary()) {
+          <input type="text" [ngModel]="libraryQuery()" (ngModelChange)="libraryQuery.set($event)"
+            placeholder="Buscar…"
+            class="border border-gray-300 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-primary focus:outline-none" />
+          <div class="flex flex-col gap-1 max-h-48 overflow-y-auto">
+            @for (r of filteredRecipes(); track r.id) {
+              <button (click)="addFromLibrary(r)"
+                class="flex items-center justify-between px-3 py-2 bg-gray-50 hover:bg-gray-100 rounded-lg text-sm text-left w-full">
+                <span class="truncate">{{ r.name }}</span>
+                <span class="text-xs text-gray-400 ml-2 shrink-0">{{ r.cook_time ?? r.total_time ?? 30 }} min</span>
+              </button>
+            }
+          </div>
+        }
+      </section>
+
+      <!-- Add manual -->
+      <section class="flex flex-col gap-2">
+        <p class="text-sm font-semibold text-gray-500 uppercase tracking-wide">{{ 'timeline.add_manual' | translate }}</p>
+        <div class="flex gap-2 items-center">
+          <input type="text" [ngModel]="manualName()" (ngModelChange)="manualName.set($event)"
+            [placeholder]="'timeline.dish_name' | translate"
+            class="flex-1 border border-gray-300 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-primary focus:outline-none" />
+          <input type="number" [ngModel]="manualMinutes()" (ngModelChange)="manualMinutes.set(+$event)"
+            min="1" max="480"
+            class="w-16 border border-gray-300 rounded-lg px-2 py-2 text-sm text-center focus:ring-2 focus:ring-primary focus:outline-none" />
+          <span class="text-xs text-gray-400 shrink-0">{{ 'timeline.minutes' | translate }}</span>
+          <button (click)="addManual()"
+            class="bg-gray-100 text-gray-700 px-3 py-2 rounded-lg text-sm font-medium shrink-0">
+            {{ 'timeline.add' | translate }}
+          </button>
+        </div>
+      </section>
+
+      <button (click)="generate()" [disabled]="!canGenerate"
+        class="bg-primary text-white rounded-lg py-4 font-bold text-lg disabled:opacity-40">
+        {{ 'timeline.generate' | translate }}
+      </button>
+
+      <button (click)="close()" class="text-gray-400 text-sm text-center">
+        {{ 'timeline.close' | translate }}
+      </button>
+    }
+
+    <!-- ── ACTIVE PHASE ── -->
+    @if (phase() === 'active') {
+      <div class="flex flex-col gap-3">
+        @for (slot of slots(); track slot.dish.id) {
+          <div [class]="
+            slot.status === 'started'
+              ? 'flex items-center gap-3 bg-green-50 border border-green-200 rounded-xl p-4 opacity-60'
+              : slot.status === 'alert'
+                ? 'flex items-center gap-3 bg-orange-50 border border-orange-300 rounded-xl p-4'
+                : 'flex items-center gap-3 bg-white border border-gray-200 rounded-xl p-4'
+          ">
+            <div class="flex-1 min-w-0">
+              <p class="font-semibold text-gray-900 truncate">{{ slot.dish.name }}</p>
+              <p class="text-sm text-gray-500">
+                {{ 'timeline.starts_at' | translate }} {{ formatTime(slot.startAt) }}
+                @if (slot.status === 'pending' && countdowns()[slot.dish.id] > 0) {
+                  · {{ 'timeline.in_x_min' | translate: { min: countdowns()[slot.dish.id] } }}
+                }
+              </p>
+            </div>
+            @if (slot.status === 'started') {
+              <span class="text-green-500 text-xl shrink-0">✓</span>
+            } @else if (slot.status === 'alert') {
+              <span class="text-orange-500 text-xl shrink-0 animate-pulse">⏰</span>
+            }
+          </div>
+        }
+      </div>
+
+      <button (click)="close()" class="text-gray-400 text-sm text-center mt-2">
+        {{ 'timeline.close' | translate }}
+      </button>
+    }
+
+    <!-- ── DONE PHASE ── -->
+    @if (phase() === 'done') {
+      <div class="text-center py-8 flex flex-col gap-4">
+        <p class="text-xl font-bold text-gray-900">
+          {{ 'timeline.all_started' | translate: { time: formatTime(targetTime()!) } }}
+        </p>
+        <button (click)="close()"
+          class="bg-primary text-white rounded-lg px-8 py-3 font-bold text-lg mx-auto">
+          {{ 'timeline.close' | translate }}
+        </button>
+      </div>
+    }
+
+  </div>
+</div>
