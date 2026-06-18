@@ -41,7 +41,7 @@ missingCount = computed(() =>
 
 **File:** `src/app/features/tonight/tonight-page.component.html`
 
-Insert between the existing `@if (current()!.matchedInventoryItems.length > 0)` block and the `@if (current()!.missingEquipment.length > 0)` block — so inventory info stays grouped (what you have + what you're missing):
+Insert immediately after the existing `@if (current()!.matchedInventoryItems.length > 0)` block and before the substitutions block — so inventory info stays grouped (what you have + what you're missing) and contiguous:
 
 ```html
 @if (missingCount() === 1) {
