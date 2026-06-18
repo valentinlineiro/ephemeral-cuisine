@@ -65,6 +65,7 @@ The user builds their dish list and sets the target time.
 **Target time input:**
 - HH:MM text input, default = now + 45 minutes, rounded to the nearest 5 minutes
 - Stored as a `string` signal (`targetTimeStr`), parsed to `Date` on submit
+- **Validation on submit:** must match `^\d{2}:\d{2}$`, hours 00–23, minutes 00–59. If invalid, a `targetTimeError` signal is set and an inline error message is shown below the field. The "Generar" button remains disabled while `targetTimeError` is non-null.
 
 **Adding dishes — two modes:**
 
@@ -86,9 +87,11 @@ Real-time orchestration view.
 - Countdown: "en X min" (recalculated on each tick)
 - Status indicator
 
-**Tick mechanism:** `setInterval` every 30 seconds. On each tick:
+**Tick mechanism:** `setInterval` every 15 seconds. On each tick:
 - For each slot with `status === 'pending'`: if `Date.now() >= slot.startAt.getTime()` → set status to `'alert'`
 - Recalculate countdown displays
+
+*Note: a 15s interval means an alert can appear up to 15 seconds late. This is an accepted tradeoff — real-time precision is not required for cooking orchestration, and 15s is imperceptible in practice.*
 
 **Alert state:** When a slot reaches `alert`, a sticky banner appears at the top of the screen:
 > "¡Empieza [nombre] ahora!"
@@ -111,13 +114,14 @@ Shows a completion message: "Todo en marcha 🎉 · Todo listo a las [targetTime
 
 **`tonight-page.component.ts`:**
 - Add `showTimeline = signal(false)`
-- Add `loadRecipesForTimeline = signal<Recipe[]>([])` — loaded lazily on first open via `RecipeService.getAll()`
+- Add `timelineRecipes = signal<Recipe[]>([])`
+- Add `openTimeline()` method: loads recipes lazily on first tap via `RecipeService.search({})` (only if `timelineRecipes()` is empty), then sets `showTimeline(true)`. Subsequent opens reuse the cached signal.
 
 **`tonight-page.component.html`:**
-- Button below the suggestion card: `(click)="showTimeline.set(true)"`
-- `@if (showTimeline())` wraps `<app-multi-dish-timeline [recipes]="loadRecipesForTimeline()" (done)="showTimeline.set(false)" />`
+- Button below the suggestion card: `(click)="openTimeline()"`
+- `@if (showTimeline())` wraps `<app-multi-dish-timeline [recipes]="timelineRecipes()" (done)="showTimeline.set(false)" />`
 
-The `MultiDishTimelineComponent` receives `recipes` as an input to avoid re-fetching.
+The `MultiDishTimelineComponent` receives `recipes` as an input to avoid re-fetching. Recipes are **not** loaded on Tonight page mount — only on first tap of the button.
 
 ---
 
