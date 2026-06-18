@@ -105,7 +105,7 @@ protected nextStep = (t: TechniqueWithStats): string | null => getNextStep(t.nam
 
 **File:** `src/app/features/techniques/techniques-page/techniques-page.component.html`
 
-In the technique list item, add after the technique name:
+In the technique list item, **replace** the existing `{{ t.skill_level }}` display with the mastery chip + cook count + nudge. `skill_level` is a static self-declaration; mastery is computed from actual cook history and is strictly more informative. Result: 1–2 lines per card (not 3–4).
 
 ```html
 <span [class]="'text-xs font-bold ' + masteryColor(t.mastery)">{{ t.mastery }}</span>
@@ -116,6 +116,9 @@ In the technique list item, add after the technique name:
     {{ 'techniques.next_step' | translate }}: {{ nextStep(t) }}
   </p>
 }
+```
+
+New techniques with 0 cooks display `F  0 cocciones` — the red F acts as a motivator to start cooking.
 ```
 
 ---
