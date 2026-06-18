@@ -55,7 +55,11 @@
     "mood_default": "Mejor",
     "mood_comfort": "Confort",
     "mood_adventure": "Aventura",
-    "mood_impress": "Impresionar"
+    "mood_impress": "Impresionar",
+    "predicted_rating": "~{{rating}} ⭐ predicho",
+    "multi_dish": "Varios platos",
+    "missing_one": "🛒 Solo te falta 1 ingrediente",
+    "missing_n": "🛒 Solo te faltan {{n}} ingredientes"
   },
   "ranking": {
     "title": "Mis Mejores Platos",
@@ -121,7 +125,9 @@
     "mastery": "Maestría",
     "bootcamp_title": "Bootcamp de repostería",
     "bootcamp_tier": "Nivel",
-    "bootcamp_needs": "Necesitas"
+    "bootcamp_needs": "Necesitas",
+    "cooks": "cocciones",
+    "next_step": "Prueba después"
   },
   "settings": {
     "title": "Ajustes",
@@ -206,5 +212,21 @@
     "protein_days": "días proteína",
     "swap_title": "¿Qué pasa si cambias",
     "per_serving": "por ración"
+  },
+  "timeline": {
+    "target_time_error": "Formato inválido. Usa HH:MM (00:00 – 23:59)",
+    "title": "Varios platos",
+    "target_time": "¿A qué hora quieres cenar?",
+    "add_from_library": "Buscar receta",
+    "add_manual": "Añadir manualmente",
+    "dish_name": "Nombre del plato",
+    "minutes": "min",
+    "add": "Añadir",
+    "generate": "Generar timeline",
+    "starts_at": "Empieza a las",
+    "in_x_min": "en {{min}} min",
+    "alert_banner": "¡Empieza {{name}} ahora!",
+    "all_started": "Todo en marcha 🎉 · Listo a las {{time}}",
+    "close": "Cerrar"
   }
 }
