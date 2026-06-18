@@ -47,6 +47,11 @@ export class TonightPageComponent implements OnInit {
     return predictFlavors(names);
   });
 
+  missingCount = computed(() =>
+    Math.max(0, (this.current()?.recipe.ingredients.length ?? 0) -
+                 (this.current()?.matchedInventoryItems.length ?? 0))
+  );
+
   // Timeline overlay
   showTimeline = signal(false);
   timelineRecipes = signal<Recipe[]>([]);

@@ -57,7 +57,9 @@
     "mood_adventure": "Aventura",
     "mood_impress": "Impresionar",
     "predicted_rating": "~{{rating}} ⭐ predicho",
-    "multi_dish": "Varios platos"
+    "multi_dish": "Varios platos",
+    "missing_one": "🛒 Solo te falta 1 ingrediente",
+    "missing_n": "🛒 Solo te faltan {{n}} ingredientes"
   },
   "ranking": {
     "title": "Mis Mejores Platos",

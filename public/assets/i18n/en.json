@@ -57,7 +57,9 @@
     "mood_adventure": "Adventure",
     "mood_impress": "Impress",
     "predicted_rating": "~{{rating}} ⭐ predicted",
-    "multi_dish": "Multiple dishes"
+    "multi_dish": "Multiple dishes",
+    "missing_one": "🛒 Just 1 ingredient to go",
+    "missing_n": "🛒 Just {{n}} ingredients to go"
   },
   "ranking": {
     "title": "My Best Dishes",
