@@ -55,7 +55,8 @@
     "mood_default": "Best",
     "mood_comfort": "Comfort",
     "mood_adventure": "Adventure",
-    "mood_impress": "Impress"
+    "mood_impress": "Impress",
+    "multi_dish": "Multiple dishes"
   },
   "ranking": {
     "title": "My Best Dishes",
@@ -208,6 +209,19 @@
     "per_serving": "per serving"
   },
   "timeline": {
-    "target_time_error": "Invalid format. Use HH:MM (00:00 – 23:59)"
+    "target_time_error": "Invalid format. Use HH:MM (00:00 – 23:59)",
+    "title": "Multiple dishes",
+    "target_time": "What time do you want to eat?",
+    "add_from_library": "Search recipe",
+    "add_manual": "Add manually",
+    "dish_name": "Dish name",
+    "minutes": "min",
+    "add": "Add",
+    "generate": "Generate timeline",
+    "starts_at": "Starts at",
+    "in_x_min": "in {{min}} min",
+    "alert_banner": "Start {{name}} now!",
+    "all_started": "All started 🎉 · Ready at {{time}}",
+    "close": "Close"
   }
 }

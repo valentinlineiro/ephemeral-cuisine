@@ -55,7 +55,8 @@
     "mood_default": "Mejor",
     "mood_comfort": "Confort",
     "mood_adventure": "Aventura",
-    "mood_impress": "Impresionar"
+    "mood_impress": "Impresionar",
+    "multi_dish": "Varios platos"
   },
   "ranking": {
     "title": "Mis Mejores Platos",
@@ -208,6 +209,19 @@
     "per_serving": "por ración"
   },
   "timeline": {
-    "target_time_error": "Formato inválido. Usa HH:MM (00:00 – 23:59)"
+    "target_time_error": "Formato inválido. Usa HH:MM (00:00 – 23:59)",
+    "title": "Varios platos",
+    "target_time": "¿A qué hora quieres cenar?",
+    "add_from_library": "Buscar receta",
+    "add_manual": "Añadir manualmente",
+    "dish_name": "Nombre del plato",
+    "minutes": "min",
+    "add": "Añadir",
+    "generate": "Generar timeline",
+    "starts_at": "Empieza a las",
+    "in_x_min": "en {{min}} min",
+    "alert_banner": "¡Empieza {{name}} ahora!",
+    "all_started": "Todo en marcha 🎉 · Listo a las {{time}}",
+    "close": "Cerrar"
   }
 }

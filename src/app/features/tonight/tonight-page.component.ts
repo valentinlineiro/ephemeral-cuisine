@@ -1,3 +1,4 @@
+// src/app/features/tonight/tonight-page.component.ts
 import { Component, OnInit, computed, signal } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { TranslatePipe } from '@ngx-translate/core';
@@ -9,11 +10,14 @@ import { DietaryProfileService } from '../../core/dietary-profile.service';
 import { DietaryProfile } from '../../core/models/dietary-profile.model';
 import { HealthService, WeeklySummary } from '../health/health.service';
 import { sodiumColor, calorieColor } from '../health/health-color';
+import { RecipeService } from '../recipes/recipe.service';
+import { Recipe } from '../recipes/models/recipe.model';
+import { MultiDishTimelineComponent } from '../timeline/multi-dish-timeline.component';
 
 @Component({
   selector: 'app-tonight-page',
   standalone: true,
-  imports: [TranslatePipe, RouterLink],
+  imports: [TranslatePipe, RouterLink, MultiDishTimelineComponent],
   templateUrl: './tonight-page.component.html',
 })
 export class TonightPageComponent implements OnInit {
@@ -43,6 +47,10 @@ export class TonightPageComponent implements OnInit {
     return predictFlavors(names);
   });
 
+  // Timeline overlay
+  showTimeline = signal(false);
+  timelineRecipes = signal<Recipe[]>([]);
+
   protected getExpiryStatus = getExpiryStatus;
   protected sodiumColor = sodiumColor;
   protected calorieColor = calorieColor;
@@ -52,6 +60,7 @@ export class TonightPageComponent implements OnInit {
     private supabase: SupabaseService,
     private dietaryProfile: DietaryProfileService,
     private healthService: HealthService,
+    private recipeService: RecipeService,
   ) {}
 
   async ngOnInit(): Promise<void> {
@@ -71,8 +80,15 @@ export class TonightPageComponent implements OnInit {
     );
     this.loading.set(false);
 
-    // Load weekly summary in background (non-blocking)
     this.healthService.getWeeklySummary(profile).then(s => this.weeklySummary.set(s)).catch(() => null);
+  }
+
+  async openTimeline(): Promise<void> {
+    if (this.timelineRecipes().length === 0) {
+      const recipes = await this.recipeService.search({}).catch(() => []);
+      this.timelineRecipes.set(recipes);
+    }
+    this.showTimeline.set(true);
   }
 
   async setMood(m: MoodFilter): Promise<void> {
