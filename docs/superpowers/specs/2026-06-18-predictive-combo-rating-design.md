@@ -60,7 +60,7 @@ export function predictRating(
    - **Protein match:** `cook.combo.protein` and `targetProtein` match if either contains the other (case-insensitive). Cooks with empty `combo.protein` are excluded.
    - **Cuisine match:** if `targetCuisineType` is defined, `recipeCuisineMap.get(cook.recipe_id)` must equal `targetCuisineType`. If `targetCuisineType` is undefined, the cuisine filter is **skipped entirely** (any cuisine qualifies).
 3. If `pool.length < minSamples` → return null
-4. Return `Math.round((sum of pool[i].ratings.self) / pool.length * 10) / 10` (1 decimal)
+4. Return `Math.round((sum of pool[i].ratings?.['self'] ?? 0) / pool.length * 10) / 10` (1 decimal) — consistent with how `scoreRecipe()` handles ratings in `suggestion.service.ts`
 
 **Known limitations (documented, not fixed):**
 - Substring matching can produce false positives for compound protein strings (e.g., `"pollo y chorizo"` matches `"pollo"`). Acceptable for MVP given typical combo.protein entries are single-word.
