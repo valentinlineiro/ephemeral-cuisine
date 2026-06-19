@@ -144,6 +144,8 @@
     "add_member": "Add",
     "save": "Save profile",
     "saving": "Saving…",
+    "appearance": "Appearance",
+    "dark_mode": "Dark mode",
     "language": "Language",
     "account": "Account",
     "sign_out": "Sign out"
